@@ -6,10 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 
@@ -80,10 +81,10 @@ public class SiteInfo extends BaseEntity<Long> {
     @JsonView({ViewView.class})
     private Boolean adshow;
 
-    @NotEmpty
+    @JsonView({ViewView.class})
     @Column(nullable = false, length = 4000)
     @Convert(converter = RewardConverter.class)
-    private Reward reward;
+    private Map<String,Object> reward  = new HashMap<>();
 
 
     public App getApp() {
@@ -182,11 +183,11 @@ public class SiteInfo extends BaseEntity<Long> {
         this.adshow = adshow;
     }
 
-    public Reward getReward() {
+    public Map<String, Object> getReward() {
         return reward;
     }
 
-    public void setReward(Reward reward) {
+    public void setReward(Map<String, Object> reward) {
         this.reward = reward;
     }
 
@@ -197,7 +198,7 @@ public class SiteInfo extends BaseEntity<Long> {
      * @version 1.0
      */
     @Converter
-    public static class RewardConverter extends BaseAttributeConverter<Reward> {
+    public static class RewardConverter extends BaseAttributeConverter<Map<String,Object>> {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -27,6 +27,7 @@ public class AppValidateInterceptor  extends HandlerInterceptorAdapter {
         String appCode = request.getParameter("appCode");
         String appSecret = request.getParameter("appSecret");
         App app = appService.findByCodeAndSecret(appCode,appSecret);
+        System.out.println("---------------------------------------------------------------aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         if(app==null){
             Map<String, Object> data = new HashMap<>();
             data.put("data", Result.error("非法调用"));
@@ -50,7 +51,6 @@ public class AppValidateInterceptor  extends HandlerInterceptorAdapter {
             JsonUtils.writeValue(response.getWriter(), data);
             return false;
         }
-
         return true;
     }
 }

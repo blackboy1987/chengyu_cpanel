@@ -56,7 +56,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			member.setMemberRank(memberRankService.findDefault());
 			return super.save(member);
 		}
-		return super.update(member);
+		return member;
 	}
 
 	@Override
@@ -69,6 +69,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		Map<String,Object> data = new HashMap<>();
 		data.put("nickName",member.getNickName());
 		data.put("money",member.getMoney());
+		data.put("ticket",3);
 		return data;
 	}
 }

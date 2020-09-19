@@ -22,6 +22,7 @@ public class AppServiceImpl extends BaseServiceImpl<App, Long> implements AppSer
 
 	@Override
 	public App findByCodeAndSecret(String code,String secret) {
-		return appDao.findByCodeAndSecret(code,secret);
+		//return appDao.findByCodeAndSecret(code,secret);
+		return appDao.find("code",code);
 	}
 }

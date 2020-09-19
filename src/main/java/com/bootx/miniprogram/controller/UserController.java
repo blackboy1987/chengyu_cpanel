@@ -77,6 +77,7 @@ public class UserController {
             data.put("rankNameImg",memberRank.getRankNameImg());
             data.put("rankName",memberRank.getName());
             data.put("rank",memberRank.getId());
+            data.put("residueTime",550);
             data.put("willTitle","还差"+(memberRank.getNext().getLevel()-member.getGameLevel())+"关晋级"+memberRank.getNext().getName());
         }
         return Result.success(data);

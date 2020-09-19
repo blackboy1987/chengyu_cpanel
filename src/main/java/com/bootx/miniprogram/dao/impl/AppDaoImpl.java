@@ -25,6 +25,7 @@ public class AppDaoImpl extends BaseDaoImpl<App, Long> implements AppDao {
         try {
             return query.getSingleResult();
         }catch (Exception e){
+            e.printStackTrace();
             return null;
         }
     }
