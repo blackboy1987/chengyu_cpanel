@@ -1,6 +1,6 @@
 spring:
   datasource:
     password: igomall@123456
-    url: jdbc:mysql://igomall1.mysql.rds.aliyuncs.com:3306/wzry?useSSL=true
+    url: jdbc:mysql://igomall1.mysql.rds.aliyuncs.com:3306/chengyu?useSSL=true
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver

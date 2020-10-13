@@ -24,8 +24,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(corsInterceptor())
                 .addPathPatterns("/**");
-        registry.addInterceptor(appValidateInterceptor())
-                .addPathPatterns("/**");
+       /* registry.addInterceptor(appValidateInterceptor())
+                .addPathPatterns("/**");*/
 
     }
 

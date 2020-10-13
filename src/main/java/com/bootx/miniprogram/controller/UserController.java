@@ -1,12 +1,10 @@
 package com.bootx.miniprogram.controller;
 
 import com.bootx.common.Result;
-import com.bootx.entity.BaseEntity;
 import com.bootx.miniprogram.entity.Member;
 import com.bootx.miniprogram.entity.MemberRank;
 import com.bootx.miniprogram.service.AppService;
 import com.bootx.miniprogram.service.MemberService;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController("miniprogramUserController")
-@RequestMapping("/minprogram/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -25,7 +23,6 @@ public class UserController {
     private AppService appService;
 
     @GetMapping("/info")
-    @JsonView({BaseEntity.ViewView.class})
     public Result index(String appCode, String appSecret,String userToken){
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));
         return Result.success(memberService.getData(member));

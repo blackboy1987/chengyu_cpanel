@@ -9,7 +9,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "zhaocha_member_rank")
 public class MemberRank extends BaseEntity<Long> {
 
     @NotNull

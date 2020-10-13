@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BootxWzryApplication {
+public class BootxChengYuApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BootxWzryApplication.class, args);
+        SpringApplication.run(BootxChengYuApplication.class, args);
     }
 
 }

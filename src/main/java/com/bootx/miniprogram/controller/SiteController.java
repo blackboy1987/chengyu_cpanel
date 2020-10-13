@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController("miniprogramSiteController")
-@RequestMapping("/minprogram/site")
+@RequestMapping("/api/site")
 public class SiteController {
 
     @Autowired

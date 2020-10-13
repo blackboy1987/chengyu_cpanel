@@ -6,11 +6,9 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "zhaocha_app")
 public class App extends BaseEntity<Long> {
 
     @NotNull
@@ -22,8 +20,8 @@ public class App extends BaseEntity<Long> {
     private String appSecret;
 
     @NotNull
-    @Length(min = 10,max = 10)
-    @Column(nullable = false,updatable = false,unique = true,length = 8)
+    @Length(min = 18,max = 18)
+    @Column(nullable = false,updatable = false,unique = true)
     private String code;
 
     @NotNull

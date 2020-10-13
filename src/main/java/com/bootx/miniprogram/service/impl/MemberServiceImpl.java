@@ -53,8 +53,14 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			member.setSessionKey(sessionKey);
 			member.setApp(app);
 			member.setMoney(BigDecimal.ZERO);
+			member.setGameLevel(0);
+			member.setLevel(0);
+			member.setCartIndex(0);
+			member.setHouseIndex(0);
+			member.setJobIndex(0);
 			member.setMemberRank(memberRankService.findDefault());
-			return super.save(member);
+			// return super.save(member);
+			return member;
 		}
 		return member;
 	}
@@ -70,6 +76,10 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		data.put("nickName",member.getNickName());
 		data.put("money",member.getMoney());
 		data.put("ticket",3);
+		data.put("level",member.getLevel());
+		data.put("carIndex",member.getCartIndex());
+		data.put("houseIndex",member.getHouseIndex());
+		data.put("jobIndex",member.getJobIndex());
 		return data;
 	}
 }

@@ -2,13 +2,15 @@ package com.bootx.miniprogram.entity;
 
 import com.bootx.entity.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
-
-@Table(name = "zhaocha_member")
 public class Member extends BaseEntity<Long> {
 
     @NotNull
@@ -50,11 +52,25 @@ public class Member extends BaseEntity<Long> {
     @Column(nullable = false)
     private Integer gameLevel;
 
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer level;
 
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer cartIndex;
 
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer houseIndex;
 
-
-
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    private Integer jobIndex;
 
 
     public String getOpenId() {
@@ -167,5 +183,37 @@ public class Member extends BaseEntity<Long> {
 
     public void setGameLevel(Integer gameLevel) {
         this.gameLevel = gameLevel;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public Integer getCartIndex() {
+        return cartIndex;
+    }
+
+    public void setCartIndex(Integer cartIndex) {
+        this.cartIndex = cartIndex;
+    }
+
+    public Integer getHouseIndex() {
+        return houseIndex;
+    }
+
+    public void setHouseIndex(Integer houseIndex) {
+        this.houseIndex = houseIndex;
+    }
+
+    public Integer getJobIndex() {
+        return jobIndex;
+    }
+
+    public void setJobIndex(Integer jobIndex) {
+        this.jobIndex = jobIndex;
     }
 }

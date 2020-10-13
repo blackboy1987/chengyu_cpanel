@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-
-@Table(name = "zhaocha_site_info")
 public class SiteInfo extends BaseEntity<Long> {
 
     @OneToOne
