@@ -39,11 +39,11 @@ public class Idiom extends BaseEntity<Long> {
     @NotEmpty
     @Column(nullable = false, length = 8000)
     @Convert(converter = GameBoxConverter.class)
+    @JsonView({BaseEntity.ViewView.class})
     private List<List<GameBox>> gameBoxes = new ArrayList<>();
 
     @Column(nullable = false, length = 8000)
     @Convert(converter = GameBox1Converter.class)
-    @JsonView({BaseEntity.ViewView.class})
     private List<GameBox> gameBoxes1 = new ArrayList<>();
 
 
@@ -94,12 +94,16 @@ public class Idiom extends BaseEntity<Long> {
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class GameBox implements Serializable{
 
+        @JsonView({BaseEntity.ViewView.class})
         private Boolean canSelect;
 
+        @JsonView({BaseEntity.ViewView.class})
         private Boolean show;
 
+        @JsonView({BaseEntity.ViewView.class})
         private String text;
 
+        @JsonView({BaseEntity.ViewView.class})
         private String ans;
 
         public Boolean getCanSelect() {
