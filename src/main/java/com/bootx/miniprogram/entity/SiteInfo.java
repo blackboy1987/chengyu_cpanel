@@ -84,6 +84,11 @@ public class SiteInfo extends BaseEntity<Long> {
     @Convert(converter = RewardConverter.class)
     private Map<String,Object> reward  = new HashMap<>();
 
+    @JsonView({ViewView.class})
+    @Column(nullable = false, length = 4000)
+    @Convert(converter = RewardConverter.class)
+    private Map<String,Object> extras  = new HashMap<>();
+
 
     public App getApp() {
         return app;
@@ -187,6 +192,23 @@ public class SiteInfo extends BaseEntity<Long> {
 
     public void setReward(Map<String, Object> reward) {
         this.reward = reward;
+    }
+
+    /**
+     * deductionPoint:每次点击扣除积分数
+     * browseVideoRewardPoint:看视频奖励积分数
+     * everyLevelReward:连续通过多少关有奖励
+     * everyLevelRewardMoney:连续通过多少关的奖励金额（这里是最高金额，具体金额根据随机算法算出来的）
+     * firstLoginRewardMoney:注册奖励金额
+     * firstLoginRewardPoint:注册奖励积分数额
+     * @return
+     */
+    public Map<String, Object> getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Map<String, Object> extras) {
+        this.extras = extras;
     }
 
     /**

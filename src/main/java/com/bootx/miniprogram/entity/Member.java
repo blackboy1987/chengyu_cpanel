@@ -72,6 +72,9 @@ public class Member extends BaseEntity<Long> {
     @Column(nullable = false)
     private Integer jobIndex;
 
+    @Column(nullable = false)
+    private Long point;
+
 
     public String getOpenId() {
         return openId;
@@ -215,5 +218,13 @@ public class Member extends BaseEntity<Long> {
 
     public void setJobIndex(Integer jobIndex) {
         this.jobIndex = jobIndex;
+    }
+
+    public Long getPoint() {
+        return point;
+    }
+
+    public void setPoint(Long point) {
+        this.point = point;
     }
 }

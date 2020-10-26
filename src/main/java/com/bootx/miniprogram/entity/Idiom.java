@@ -47,6 +47,13 @@ public class Idiom extends BaseEntity<Long> {
     private List<GameBox> gameBoxes1 = new ArrayList<>();
 
 
+
+    @Column(length = 50)
+    @Convert(converter = IdiomsConverter.class)
+    @JsonView({BaseEntity.ViewView.class})
+    private List<String> ganRaos = new ArrayList<>();
+
+
     public Integer getLevel() {
         return level;
     }
@@ -89,6 +96,14 @@ public class Idiom extends BaseEntity<Long> {
 
     public void setGameBoxes1(List<GameBox> gameBoxes1) {
         this.gameBoxes1 = gameBoxes1;
+    }
+
+    public List<String> getGanRaos() {
+        return ganRaos;
+    }
+
+    public void setGanRaos(List<String> ganRaos) {
+        this.ganRaos = ganRaos;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -137,6 +152,8 @@ public class Idiom extends BaseEntity<Long> {
         public void setAns(String ans) {
             this.ans = ans;
         }
+
+
     }
 
 

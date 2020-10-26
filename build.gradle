@@ -31,6 +31,7 @@ dependencies {
     compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.66'
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
+    compile group: 'com.belerweb', name: 'pinyin4j', version: '2.5.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'

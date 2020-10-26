@@ -74,7 +74,8 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 	public Map<String, Object> getData(Member member) {
 		Map<String,Object> data = new HashMap<>();
 		data.put("nickName",member.getNickName());
-		data.put("money",member.getMoney());
+		data.put("money",setScale(member.getMoney()));
+		data.put("point",member.getPoint());
 		data.put("ticket",3);
 		data.put("level",member.getLevel());
 		data.put("carIndex",member.getCartIndex());
@@ -82,4 +83,9 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		data.put("jobIndex",member.getJobIndex());
 		return data;
 	}
+
+	private BigDecimal setScale(BigDecimal amount) {
+		return amount.setScale(2, BigDecimal.ROUND_UP);
+	}
+
 }

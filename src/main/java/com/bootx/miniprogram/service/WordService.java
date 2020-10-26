@@ -1,7 +1,7 @@
 
 package com.bootx.miniprogram.service;
 
-import com.bootx.miniprogram.entity.Idiom;
+import com.bootx.miniprogram.entity.Word;
 import com.bootx.service.BaseService;
 
 /**
@@ -10,7 +10,7 @@ import com.bootx.service.BaseService;
  * @author blackboy
  * @version 1.0
  */
-public interface IdiomService extends BaseService<Idiom,Long> {
+public interface WordService extends BaseService<Word,Long> {
 
-    Idiom findByLeve(Integer level);
+    Word findByText(String text);
 }
