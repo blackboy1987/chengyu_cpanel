@@ -1,14 +1,15 @@
 package com.bootx.miniprogram.controller.idom;
 
+import com.bootx.Main;
 import com.bootx.common.Result;
 import com.bootx.entity.BaseEntity;
 import com.bootx.miniprogram.entity.*;
 import com.bootx.miniprogram.service.AppService;
-import com.bootx.miniprogram.service.IdiomService;
+import com.bootx.miniprogram.service.Idiom1Service;
 import com.bootx.miniprogram.service.MemberService;
 import com.bootx.miniprogram.service.WordService;
-import com.bootx.util.HanyuPinyinUtils;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,36 +31,39 @@ public class IndexController {
     @Autowired
     private AppService appService;
     @Autowired
-    private IdiomService idiomService;
+    private Idiom1Service idiom1Service;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @GetMapping("/index")
-    public String index () {
-        String start="4e00";//定义一个字符串变量为4e00
-        String end="9fa5";//定义一个字符串变量为9fa5
-        int s=Integer.parseInt(start, 16);//将16进制字符start转换为10进制整数
-        int e=Integer.parseInt(end, 16);//将16进制字符end转换为10进制整数
-        for (int i=s;i<=e;i++){//for循环实现汉字的输出
-            String str=(char)i+ "";//类型转换
-            Word word = wordService.findByText(str);
-            if(word==null){
-                word = new Word();
-                System.out.println("text:"+str);
-                word.setText(str);
-                try {
-                    word.setPinYin(HanyuPinyinUtils.ToPinyin(word.getText()));
-                }catch (Exception exception){
-                    exception.printStackTrace();
+    private Result index() throws Exception{
+
+        List<String[]> idoms = Main.main();
+
+        for (int i=0;i<idoms.size();i++){
+            Idiom1 idiom1 = new Idiom1();
+            char[] chars = idoms.get(i)[0].toCharArray();
+            for (char c:chars) {
+                if(StringUtils.isNotBlank(c+"")){
+                    idiom1.getText().add(c+"");
                 }
-                wordService.save(word);
             }
+            idiom1.setLevel(i+1);
+            String[] chars1 = idoms.get(i)[1].split(" ");
+            for (String c:chars1) {
+                if(StringUtils.isNotBlank(c)){
+                    idiom1.getPinYin().add(c);
+                }
+            }
+            new Thread(()->{
+                idiom1Service.save(idiom1);
+            }).start();
+            Thread.sleep(20);
         }
 
-        return "ok";
+        return Result.success("aa");
     }
-
 
     @GetMapping("/game")
     @JsonView(BaseEntity.ViewView.class)
@@ -71,8 +75,8 @@ public class IndexController {
         if(level==null){
             level = 0;
         }
-        Idiom idiom = idiomService.findByLeve(level+1);
-        String idiomStr = idiom.getIdioms().get(0);
+        Idiom1 idiom = idiom1Service.findByLeve(level+1);
+        String idiomStr = StringUtils.join(idiom.getText(),"");
         char[] chars = idiomStr.toCharArray();
         // 干扰词
         Integer position = new Random().nextInt(4);
@@ -80,6 +84,8 @@ public class IndexController {
         Word word = wordService.findByText(text+"");
         List<String> ganrao = getGanRao(word);
         ganrao.add(text+"");
+        Collections.shuffle(ganrao);
+        Collections.shuffle(ganrao);
         data.put("idiom",idiomStr);
         data.put("answers",ganrao);
         data.put("level",level+1);
@@ -177,8 +183,6 @@ public class IndexController {
         maps.stream().forEach(map->{
             ganrao.add(map.get("text")+"");
         });
-        Collections.shuffle(ganrao);
-        Collections.shuffle(ganrao);
         return ganrao;
     }
 

@@ -23,4 +23,13 @@ public class UserController {
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));
         return Result.success(memberService.getData(member));
     }
+    @GetMapping("/update")
+    public Result update(Long id){
+        Member member = memberService.find(id);
+        if(member!=null){
+            member.setPoint(10000L);
+            memberService.update(member);
+        }
+        return Result.success(memberService.getData(member));
+    }
 }
