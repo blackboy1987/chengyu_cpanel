@@ -25,7 +25,7 @@ public class GameController {
 
     @GetMapping("/level2")
     public Result level(String code, String appCode, String appSecret){
-        for (Long i = 596L; i < 3009L; i++) {
+        for (Long i = 1993L; i < 3009L; i++) {
             level3(code,appCode,appSecret,i);
         }
         return Result.success("ok");
@@ -37,7 +37,9 @@ public class GameController {
         Idiom idiom = idiomService.find(id);
         if(idiom!=null){
             idiom.setGameBoxes1(idiom.getGameBoxes().get(0));
-            idiomService.update(idiom);
+            new Thread(()->{
+                    idiomService.update(idiom);
+            }).start();
         }
         return Result.success("ok");
     }
