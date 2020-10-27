@@ -197,6 +197,7 @@ public class SiteInfo extends BaseEntity<Long> {
     /**
      * deductionPoint:每次点击扣除积分数
      * browseVideoRewardPoint:看视频奖励积分数
+     * shareRewardPoint:分享奖励积分数
      * everyLevelReward:连续通过多少关有奖励
      * everyLevelRewardMoney:连续通过多少关的奖励金额（这里是最高金额，具体金额根据随机算法算出来的）
      * firstLoginRewardMoney:注册奖励金额

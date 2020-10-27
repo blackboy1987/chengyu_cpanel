@@ -45,6 +45,7 @@ public class SiteController {
         extras.put("everyLevelRewardMoney",3);
         extras.put("firstLoginRewardMoney",1);
         extras.put("firstLoginRewardPoint",1000);
+        extras.put("shareRewardPoint",100);
         siteInfo.setExtras(extras);
 
         siteInfoService.update(siteInfo);

@@ -45,6 +45,8 @@ public class Member extends BaseEntity<Long> {
 
     private String avatarUrl;
 
+    private String wechat;
+
     @Column(nullable = false, precision = 27, scale = 12)
     private BigDecimal money;
 
@@ -74,6 +76,15 @@ public class Member extends BaseEntity<Long> {
 
     @Column(nullable = false)
     private Long point;
+
+    @Column(updatable = false)
+    private Long parentId;
+
+    /**
+     * 消费金额
+     */
+    @Column(nullable = false, precision = 27, scale = 12)
+    private BigDecimal amount;
 
 
     public String getOpenId() {
@@ -226,5 +237,29 @@ public class Member extends BaseEntity<Long> {
 
     public void setPoint(Long point) {
         this.point = point;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getWechat() {
+        return wechat;
+    }
+
+    public void setWechat(String wechat) {
+        this.wechat = wechat;
     }
 }
