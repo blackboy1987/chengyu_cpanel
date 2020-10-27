@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +36,7 @@ public class IndexController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/index")
+    @PostMapping("/index")
     private Result index() throws Exception{
 
         List<String[]> idoms = Main.main();
@@ -65,7 +65,7 @@ public class IndexController {
         return Result.success("aa");
     }
 
-    @GetMapping("/game")
+    @PostMapping("/game")
     @JsonView(BaseEntity.ViewView.class)
     public Result game (String appCode, String appSecret, String userToken) {
         Map<String,Object> data = new HashMap<>();
@@ -101,7 +101,7 @@ public class IndexController {
      * @param level
      * @return
      */
-    @GetMapping("/success")
+    @PostMapping("/success")
     @JsonView(BaseEntity.ViewView.class)
     public Result success (String appCode, String appSecret, String userToken,Integer level,Integer levelCount) {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
@@ -128,7 +128,7 @@ public class IndexController {
      * @param level
      * @return
      */
-    @GetMapping("/discount")
+    @PostMapping("/discount")
     @JsonView(BaseEntity.ViewView.class)
     public Result discount (String appCode, String appSecret, String userToken,Integer level) {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
@@ -152,7 +152,7 @@ public class IndexController {
      * @param level
      * @return
      */
-    @GetMapping("/redpackage")
+    @PostMapping("/redpackage")
     @JsonView(BaseEntity.ViewView.class)
     public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1) {
         if(level1==null){

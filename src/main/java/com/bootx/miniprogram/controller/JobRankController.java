@@ -4,7 +4,7 @@ import com.bootx.common.Result;
 import com.bootx.miniprogram.service.JobRankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +17,7 @@ public class JobRankController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     public Result list(String code, String appCode, String appSecret){
 
 

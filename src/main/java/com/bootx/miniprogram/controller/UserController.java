@@ -6,7 +6,7 @@ import com.bootx.miniprogram.entity.MemberRank;
 import com.bootx.miniprogram.service.AppService;
 import com.bootx.miniprogram.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +22,13 @@ public class UserController {
     @Autowired
     private AppService appService;
 
-    @GetMapping("/info")
+    @PostMapping("/info")
     public Result index(String appCode, String appSecret,String userToken){
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));
         return Result.success(memberService.getData(member));
     }
 
-    @GetMapping("/update")
+    @PostMapping("/update")
     public Result index(String appCode, String appSecret,String userToken,Member memberInfo){
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));
         if(member!=null){
@@ -63,7 +63,7 @@ public class UserController {
      * @param userToken
      * @return
      */
-    @GetMapping("/level")
+    @PostMapping("/level")
     public Result level(String appCode, String appSecret,String userToken){
         Map<String,Object> data = new HashMap<>();
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));

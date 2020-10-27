@@ -5,7 +5,7 @@ import com.bootx.miniprogram.entity.Member;
 import com.bootx.miniprogram.service.AppService;
 import com.bootx.miniprogram.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +18,12 @@ public class UserController {
     @Autowired
     private AppService appService;
 
-    @GetMapping("/info")
+    @PostMapping("/info")
     public Result index(String appCode, String appSecret,String userToken){
         Member member = memberService.findByUserTokenAndApp(userToken,appService.findByCodeAndSecret(appCode,appSecret));
         return Result.success(memberService.getData(member));
     }
-    @GetMapping("/update")
+    @PostMapping("/update")
     public Result update(Long id){
         Member member = memberService.find(id);
         if(member!=null){

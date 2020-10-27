@@ -3,13 +3,14 @@ package com.bootx.miniprogram.controller.idom;
 import com.bootx.common.Result;
 import com.bootx.miniprogram.entity.App;
 import com.bootx.miniprogram.entity.Member;
-import com.bootx.miniprogram.service.*;
+import com.bootx.miniprogram.service.AppService;
+import com.bootx.miniprogram.service.MemberService;
 import com.bootx.util.JWTUtils;
 import com.bootx.util.JsonUtils;
 import com.bootx.util.WebUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class LoginController {
     @Autowired
     private AppService appService;
 
-    @GetMapping
+    @PostMapping
     public Result index(String code, String appCode, String appSecret){
         Map<String,Object> data = new HashMap<>();
         String url = "https://api.weixin.qq.com/sns/jscode2session";
