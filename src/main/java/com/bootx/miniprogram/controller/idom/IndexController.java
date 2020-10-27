@@ -195,7 +195,24 @@ public class IndexController {
         }
         return Result.success("");
     }
-
+    @PostMapping("/rank")
+    @JsonView(BaseEntity.ViewView.class)
+    public Result rank (String appCode, String appSecret, Integer page) {
+        if(page==null||page<1){
+            page = 1;
+        }
+        Map<String,Object> result = new HashMap<>();
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select avatar_url,nick_name,level from member where app_id=? order by level desc limit ?, 10",app.getId(),10*(page-1));
+        if(list.size()==0){
+            result.put("hasMore",false);
+        }else{
+            result.put("hasMore",true);
+        }
+        result.put("list",list);
+        result.put("current",page);
+        return Result.success(result);
+    }
 
 
     private BigDecimal setScale(BigDecimal amount) {
