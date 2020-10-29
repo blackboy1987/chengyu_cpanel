@@ -29,7 +29,9 @@ public class UserController {
         if(member!=null){
             member.setPoint(10000L);
             memberService.update(member);
+            return Result.success(memberService.getData(member));
         }
-        return Result.success(memberService.getData(member));
+        return Result.error("");
+
     }
 }

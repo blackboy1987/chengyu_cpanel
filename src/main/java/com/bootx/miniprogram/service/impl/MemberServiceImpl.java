@@ -68,8 +68,9 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			member.setJobIndex(0);
 			member.setMemberRank(memberRankService.findDefault());
 			member.setAmount(BigDecimal.ZERO);
-			// return super.save(member);
-			return member;
+			member.setPoint(0L);
+			return super.save(member);
+			// return member;
 		}
 		return member;
 	}
