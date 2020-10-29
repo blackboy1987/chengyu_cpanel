@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Converter;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,12 @@ public class Idiom1 extends BaseEntity<Long> {
     @JsonView({ViewView.class})
     private List<String> pinYin  = new ArrayList<>();
 
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    @JsonView({ViewView.class})
+    private Integer position;
+
 
     public Integer getLevel() {
         return level;
@@ -55,6 +62,14 @@ public class Idiom1 extends BaseEntity<Long> {
 
     public void setPinYin(List<String> pinYin) {
         this.pinYin = pinYin;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
     /**

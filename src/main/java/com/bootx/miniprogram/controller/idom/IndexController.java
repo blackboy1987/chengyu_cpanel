@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -211,5 +212,37 @@ public class IndexController {
         return ganrao;
     }
 
+    @GetMapping("/random")
+    private Result random(){
+        for (int page=1;page<101;page++){
+            String sql = "SELECT id FROM idiom1 WHERE `level`>2000000 AND id >= ((SELECT MAX(id) FROM idiom1)-(SELECT MIN(id) FROM idiom1)) * RAND() + (SELECT MIN(id) FROM idiom1)  LIMIT 330";
+            String sql1 = "SELECT max(`level`) maxLevel FROM idiom1 where `level`<2000000;";
+
+            List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+            List<Map<String, Object>> maxLevel = jdbcTemplate.queryForList(sql1);
+            Integer level = 0;
+            if(maxLevel!=null&&maxLevel.size()==1){
+                if(maxLevel.get(0).get("maxLevel")!=null){
+                    level = Integer.valueOf(""+maxLevel.get(0).get("maxLevel"));
+                }
+            }
+
+            for (Map map:maps) {
+                Long id = Long.valueOf(map.get("id")+"");
+                Idiom1 idiom1 = idiom1Service.find(id);
+                if(idiom1!=null){
+                    level = level+1;
+                    idiom1.setLevel(level);
+                    // 设置position
+                    idiom1.setPosition(new Random().nextInt(idiom1.getText().size()));
+                    idiom1Service.update(idiom1);
+                }
+            }
+
+            System.out.println(maxLevel+":"+page+":"+maps.size());
+        }
+
+        return Result.success("ok");
+    }
 
 }
