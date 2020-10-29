@@ -141,7 +141,7 @@ public class IndexController {
         }
         member.setPoint(member.getPoint()-deductionPoint);
         memberService.update(member);
-        return Result.success("");
+        return Result.success(memberService.getData(member));
     }
 
 

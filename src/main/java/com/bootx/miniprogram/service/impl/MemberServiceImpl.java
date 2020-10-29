@@ -56,6 +56,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		Member member = memberDao.find("openId",openId);
 		if(member==null){
 			member = new Member();
+			member.setIsAuth(false);
 			member.setOpenId(openId);
 			member.setUnionid(unionid);
 			member.setSessionKey(sessionKey);
@@ -68,7 +69,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			member.setJobIndex(0);
 			member.setMemberRank(memberRankService.findDefault());
 			member.setAmount(BigDecimal.ZERO);
-			member.setPoint(0L);
+			member.setPoint(1000L);
 			return super.save(member);
 			// return member;
 		}
@@ -91,6 +92,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		data.put("carIndex",member.getCartIndex());
 		data.put("houseIndex",member.getHouseIndex());
 		data.put("jobIndex",member.getJobIndex());
+		data.put("isAuth",member.getIsAuth());
 		return data;
 	}
 

@@ -80,6 +80,10 @@ public class Member extends BaseEntity<Long> {
     @Column(updatable = false)
     private Long parentId;
 
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isAuth;
+
     /**
      * 消费金额
      */
@@ -261,5 +265,13 @@ public class Member extends BaseEntity<Long> {
 
     public void setWechat(String wechat) {
         this.wechat = wechat;
+    }
+
+    public Boolean getIsAuth() {
+        return isAuth;
+    }
+
+    public void setIsAuth(Boolean isAuth) {
+        this.isAuth = isAuth;
     }
 }
