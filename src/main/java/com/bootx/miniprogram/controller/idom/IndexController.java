@@ -166,31 +166,40 @@ public class IndexController {
         if(level1>=everyLevelReward){
             BigDecimal money = new BigDecimal(Math.random()*everyLevelRewardMoney);
             Member member = memberService.findByUserTokenAndApp(userToken,app);
-            member.setMoney(member.getMoney().add(money));
-            memberService.update(member);
             // 写入红包记录
             memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
+            // 上一级奖励
+            if(member.getParentId()!=null){
+                Member parent = memberService.find(member.getParentId());
+                if(parent!=null){
+                    memberService.addBalance(parent,money.multiply(new BigDecimal(0.05)), MemberDepositLog.Type.reward,member.getNickName()+"过关,奖励");
+                }
+            }
 
-            return Result.success(setScale(money));
+            Map<String, Object> data = new HashMap<>();
+            data.put("money",setScale(money));
+            data.put("userInfo",memberService.getData(member));
+            return Result.success(data);
         }
         return Result.error("");
     }
 
     @PostMapping("/share")
     @JsonView(BaseEntity.ViewView.class)
-    public Result redpackage (String appCode, String appSecret, String userToken,Long parentId) {
+    public Result share (String appCode, String appSecret, String userToken,Long parentId) {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
-        Member parent = memberService.find(parentId);
-        if(member!=null&&parent==null&&member.getParentId()==null && member.getId().compareTo(parentId)!=0){
+        if(member!=null&&member.getParentId()==null && member.getId().compareTo(parentId)!=0){
+            Member parent = memberService.find(parentId);
+            if(parent==null){
+                return Result.success("");
+            }
             member.setParentId(parentId);
             memberService.update(member);
             // 积分奖励
             SiteInfo siteInfo = app.getSiteInfo();
             Integer shareRewardPoint = Integer.valueOf(siteInfo.getExtras().get("shareRewardPoint").toString());
             if(shareRewardPoint>0){
-                parent.setPoint(parent.getPoint()+shareRewardPoint);
-                memberService.update(parent);
                 memberService.addPoint(parent,shareRewardPoint, PointLog.Type.reward,"分享奖励积分");
             }
         }
