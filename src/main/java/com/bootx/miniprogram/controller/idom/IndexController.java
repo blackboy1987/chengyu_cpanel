@@ -213,7 +213,7 @@ public class IndexController {
         }
         Map<String,Object> result = new HashMap<>();
         App app = appService.findByCodeAndSecret(appCode,appSecret);
-        List<Map<String,Object>> list = jdbcTemplate.queryForList("select avatar_url,nick_name,level from member where app_id=? order by level desc limit ?, 10",app.getId(),10*(page-1));
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select avatar_url,nick_name,level from member where app_id=? and level>0 order by level desc limit ?, 10",app.getId(),10*(page-1));
         if(list.size()==0){
             result.put("hasMore",false);
         }else{

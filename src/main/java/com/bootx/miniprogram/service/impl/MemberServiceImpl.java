@@ -84,6 +84,9 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 	@Override
 	public Map<String, Object> getData(Member member) {
 		Map<String,Object> data = new HashMap<>();
+		if(member==null){
+			return data;
+		}
 		data.put("nickName",member.getNickName());
 		data.put("money",setScale(member.getMoney()));
 		data.put("point",member.getPoint());

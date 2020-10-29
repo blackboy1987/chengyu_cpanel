@@ -13,12 +13,13 @@ public class Main {
     public static List<String[]> main()  {
         List<String[]> idioms = new ArrayList<>();
         try {
-            FileInputStream fis = new FileInputStream("/Users/blackoy/Desktop/chengyu/chengyu_cpanel/src/main/java/com/bootx/成语大全（31648个成语解释）.Txt");
+            FileInputStream fis = new FileInputStream("E:\\IdeaProjects\\me\\chengyu_cpanel\\src\\main\\java\\com\\bootx\\成语大全（31648个成语解释）.Txt");
             InputStreamReader isr = new InputStreamReader(fis, "gbk");
             BufferedReader br = new BufferedReader(isr);
             String line = null;
             int count = 0;
             while ((line = br.readLine()) != null) {
+                System.out.println(line);
                 if(StringUtils.isNotEmpty(line)){
                     String part1 = line.split("释义：")[0];
                     String[] part2 = part1.split("拼音：");
@@ -34,5 +35,9 @@ public class Main {
         }
 
         return idioms;
+    }
+
+    public static void main(String[] args) {
+        main();
     }
 }
