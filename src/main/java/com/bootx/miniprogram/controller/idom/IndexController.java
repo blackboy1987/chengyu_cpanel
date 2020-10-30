@@ -139,8 +139,7 @@ public class IndexController {
         if(member.getPoint().compareTo(deductionPoint)<0){
             return Result.error("积分余额不足");
         }
-        member.setPoint(member.getPoint()-deductionPoint);
-        memberService.update(member);
+        memberService.addPoint(member,-deductionPoint, PointLog.Type.adjustment,"游戏扣除积分");
         return Result.success(memberService.getData(member));
     }
 
@@ -271,4 +270,32 @@ public class IndexController {
         return Result.success("ok");
     }
 
+    @PostMapping("/adjust")
+    public Result adjust(String appCode, String appSecret, String userToken, Long point, String memo){
+        Map<String,Object> data = new HashMap<>();
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        Member member = memberService.findByUserTokenAndApp(userToken,app);
+        data.put("code",0);
+        if(app == null){
+            data.put("code",-1);
+            return Result.success(data);
+        }
+        SiteInfo siteInfo = app.getSiteInfo();
+        if(siteInfo==null || siteInfo.getExtras()==null || siteInfo.getExtras().size()==0 || siteInfo.getExtras().get("browseVideoRewardPoint")==null){
+            data.put("code",-1);
+            return Result.success(data);
+        }
+        Long browseVideoRewardPoint = Long.valueOf(siteInfo.getExtras().get("browseVideoRewardPoint")+"");
+        if(member==null){
+            data.put("code",-1);
+            return Result.success(data);
+        }
+        if(member.getPoint()+point>0){
+            // 积分调整
+            data.put("code",0);
+            memberService.addPoint(member,browseVideoRewardPoint, PointLog.Type.adjustment,memo);
+        }
+        data.put("userInfo",memberService.getData(member));
+        return Result.success(data);
+    }
 }

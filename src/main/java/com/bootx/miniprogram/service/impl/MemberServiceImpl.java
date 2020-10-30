@@ -96,6 +96,9 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		data.put("houseIndex",member.getHouseIndex());
 		data.put("jobIndex",member.getJobIndex());
 		data.put("isAuth",member.getIsAuth());
+		data.put("wechat",member.getWechat());
+		data.put("mobile",member.getMobile());
+		data.put("name",member.getName());
 		return data;
 	}
 

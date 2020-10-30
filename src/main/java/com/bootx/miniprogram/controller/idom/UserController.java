@@ -40,4 +40,19 @@ public class UserController {
         return Result.error("");
 
     }
+
+    @PostMapping("/update1")
+    public Result update1(Long id,String name,String mobile,String wechat){
+        Member member = memberService.find(id);
+        if(member!=null){
+            member.setName(name);
+            member.setMobile(mobile);
+            member.setWechat(wechat);
+            memberService.update(member);
+            return Result.success(memberService.getData(member));
+        }
+        return Result.error("");
+
+    }
+
 }

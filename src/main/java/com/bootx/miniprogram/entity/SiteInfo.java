@@ -90,6 +90,48 @@ public class SiteInfo extends BaseEntity<Long> {
     private Map<String,Object> extras  = new HashMap<>();
 
 
+    private String name;
+
+    private String logo;
+
+    /**
+     *Banner 广告
+     */
+    private String bannerAdId;
+
+    /**
+     *激励视频广告
+     */
+    private String rewardedVideoAdId;
+
+    /**
+     * 插屏广告
+     */
+    private String interstitialAdId;
+
+    /**
+     *小程序视频广告
+     */
+    private String videoAdId;
+
+    /**
+     *视频前贴广告
+     */
+    private String videoFrontAdId;
+
+    /**
+     *Grid 广告
+     */
+    private String gridAdId;
+
+    /**
+     *原生模板 广告
+     */
+    private String nativeAdId;
+
+    private Boolean isOpen;
+
+
     public App getApp() {
         return app;
     }
@@ -210,6 +252,86 @@ public class SiteInfo extends BaseEntity<Long> {
 
     public void setExtras(Map<String, Object> extras) {
         this.extras = extras;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getBannerAdId() {
+        return bannerAdId;
+    }
+
+    public void setBannerAdId(String bannerAdId) {
+        this.bannerAdId = bannerAdId;
+    }
+
+    public String getRewardedVideoAdId() {
+        return rewardedVideoAdId;
+    }
+
+    public void setRewardedVideoAdId(String rewardedVideoAdId) {
+        this.rewardedVideoAdId = rewardedVideoAdId;
+    }
+
+    public String getInterstitialAdId() {
+        return interstitialAdId;
+    }
+
+    public void setInterstitialAdId(String interstitialAdId) {
+        this.interstitialAdId = interstitialAdId;
+    }
+
+    public String getVideoAdId() {
+        return videoAdId;
+    }
+
+    public void setVideoAdId(String videoAdId) {
+        this.videoAdId = videoAdId;
+    }
+
+    public String getVideoFrontAdId() {
+        return videoFrontAdId;
+    }
+
+    public void setVideoFrontAdId(String videoFrontAdId) {
+        this.videoFrontAdId = videoFrontAdId;
+    }
+
+    public String getGridAdId() {
+        return gridAdId;
+    }
+
+    public void setGridAdId(String gridAdId) {
+        this.gridAdId = gridAdId;
+    }
+
+    public String getNativeAdId() {
+        return nativeAdId;
+    }
+
+    public void setNativeAdId(String nativeAdId) {
+        this.nativeAdId = nativeAdId;
+    }
+
+    public Boolean getIsOpen() {
+        return isOpen;
+    }
+
+    public void setIsOpen(Boolean isOpen) {
+        this.isOpen = isOpen;
     }
 
     /**

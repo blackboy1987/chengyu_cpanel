@@ -47,6 +47,10 @@ public class Member extends BaseEntity<Long> {
 
     private String wechat;
 
+    private String name;
+
+    private String mobile;
+
     @Column(nullable = false, precision = 27, scale = 12)
     private BigDecimal money;
 
@@ -273,5 +277,21 @@ public class Member extends BaseEntity<Long> {
 
     public void setIsAuth(Boolean isAuth) {
         this.isAuth = isAuth;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

@@ -3,13 +3,15 @@ package com.bootx.miniprogram.entity;
 
 import com.bootx.common.BigDecimalNumericFieldBridge;
 import com.bootx.entity.BaseEntity;
+import com.bootx.entity.OrderedEntity;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.search.annotations.*;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -18,11 +20,15 @@ import java.math.BigDecimal;
  * @author 好源++ Team
  * @version 6.1
  */
-@Indexed
 @Entity
-public class Product extends BaseEntity<Long> {
+public class Product extends OrderedEntity<Long> {
 
 	private static final long serialVersionUID = -6977025562650112419L;
+
+	@NotNull
+	@JoinColumn(nullable = false,updatable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	private App app;
 
 	/**
 	 * 名称
@@ -73,6 +79,18 @@ public class Product extends BaseEntity<Long> {
 	@SortableField
 	@Column(nullable = false)
 	private Long stock;
+
+	private String image;
+
+	private Boolean isEnabled;
+
+	public App getApp() {
+		return app;
+	}
+
+	public void setApp(App app) {
+		this.app = app;
+	}
 
 	/**
 	 * 获取名称
@@ -145,5 +163,21 @@ public class Product extends BaseEntity<Long> {
 
 	public void setStock(Long stock) {
 		this.stock = stock;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public Boolean getIsEnabled() {
+		return isEnabled;
+	}
+
+	public void setIsEnabled(Boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 }

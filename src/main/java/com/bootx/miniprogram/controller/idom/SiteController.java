@@ -29,7 +29,19 @@ public class SiteController {
     public Result index(String appCode, String appSecret){
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         SiteInfo siteInfo = app.getSiteInfo();
-        return Result.success(siteInfo.getExtras());
+        Map<String,Object> result = new HashMap<>();
+        result.putAll(siteInfo.getExtras());
+        result.put("name",siteInfo.getName());
+        result.put("logo",siteInfo.getLogo());
+        result.put("bannerAdId",siteInfo.getBannerAdId());
+        result.put("rewardedVideoAdId",siteInfo.getRewardedVideoAdId());
+        result.put("interstitialAdId",siteInfo.getInterstitialAdId());
+        result.put("videoAdId",siteInfo.getVideoAdId());
+        result.put("videoFrontAdId",siteInfo.getVideoFrontAdId());
+        result.put("gridAdId",siteInfo.getGridAdId());
+        result.put("nativeAdId",siteInfo.getNativeAdId());
+        result.put("isOpen",siteInfo.getIsOpen());
+        return Result.success(result);
     }
 
     @PostMapping("/update")
