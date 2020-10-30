@@ -1,15 +1,8 @@
-/*
- * Copyright 2008-2018 shopxx.net. All rights reserved.
- * Support: localhost
- * License: localhost/license
- * FileId: 8SkBXbqyqBJhblw8Whm7yvBchqKnaUcD
- */
+
 package com.bootx.entity;
 
 import com.bootx.audit.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -90,9 +83,6 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 	 */
 	@JsonView(BaseView.class)
 	@CreatedDate
-	@Field(store = Store.YES, index = Index.YES, analyze = Analyze.NO)
-	@DateBridge(resolution = Resolution.SECOND)
-	@SortableField
 	@Column(nullable = false, updatable = false)
 	private Date createdDate;
 
@@ -101,8 +91,6 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 	 */
 	@JsonView(BaseView.class)
 	@LastModifiedDate
-	@Field(store = Store.YES, index = Index.YES, analyze = Analyze.NO)
-	@DateBridge(resolution = Resolution.SECOND)
 	@Column(nullable = false)
 	private Date lastModifiedDate;
 

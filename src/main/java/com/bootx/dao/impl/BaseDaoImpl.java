@@ -1,10 +1,15 @@
-
+/*
+ * Copyright 2008-2018 shopxx.net. All rights reserved.
+ * Support: localhost
+ * License: localhost/license
+ * FileId: BoOUeC01ZRoj6DPdBtRDEs4pf9d8kw9Y
+ */
 package com.bootx.dao.impl;
 
 import com.bootx.common.Filter;
 import com.bootx.common.Order;
-import com.bootx.common.Page;
 import com.bootx.common.Pageable;
+import com.bootx.common.Page;
 import com.bootx.dao.BaseDao;
 import com.bootx.entity.BaseEntity;
 import com.bootx.entity.OrderedEntity;
@@ -218,7 +223,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity<ID>, ID extends Serializa
 	}
 
 	@Override
-	public Page<T> findPage(Pageable pageable) {
+	public com.bootx.common.Page<T> findPage(Pageable pageable) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 		criteriaQuery.select(criteriaQuery.from(entityClass));
@@ -365,7 +370,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity<ID>, ID extends Serializa
 		List<javax.persistence.criteria.Order> orderList = new ArrayList<>();
 		orderList.addAll(criteriaQuery.getOrderList());
 		orderList.addAll(toOrders(root, orders));
-		if (CollectionUtils.isEmpty(orderList)) {
+		if (org.springframework.util.CollectionUtils.isEmpty(orderList)) {
 			if (OrderedEntity.class.isAssignableFrom(entityClass)) {
 				orderList.add(criteriaBuilder.asc(getPath(root, OrderedEntity.ORDER_PROPERTY_NAME)));
 			} else {
@@ -485,7 +490,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity<ID>, ID extends Serializa
 				}
 			}
 		}
-		if (CollectionUtils.isEmpty(orderList)) {
+		if (org.springframework.util.CollectionUtils.isEmpty(orderList)) {
 			if (OrderedEntity.class.isAssignableFrom(entityClass)) {
 				orderList.add(criteriaBuilder.asc(getPath(root, OrderedEntity.ORDER_PROPERTY_NAME)));
 			} else {
@@ -721,7 +726,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity<ID>, ID extends Serializa
 	private Predicate toPredicate(Root<T> root, List<Filter> filters) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		Predicate restrictions = criteriaBuilder.conjunction();
-		if (root == null || CollectionUtils.isEmpty(filters)) {
+		if (root == null || org.springframework.util.CollectionUtils.isEmpty(filters)) {
 			return restrictions;
 		}
 		for (Filter filter : filters) {
