@@ -90,6 +90,7 @@ public class Member extends BaseEntity<Long> {
     @Column(nullable = false, precision = 27, scale = 12)
     private BigDecimal amount;
 
+    private Boolean isAuth;
 
     public String getOpenId() {
         return openId;

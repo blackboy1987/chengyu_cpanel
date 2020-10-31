@@ -84,6 +84,9 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 	@Override
 	public Map<String, Object> getData(Member member) {
 		Map<String,Object> data = new HashMap<>();
+		if(member==null){
+			return data;
+		}
 		data.put("nickName",member.getNickName());
 		data.put("money",setScale(member.getMoney()));
 		data.put("point",member.getPoint());
@@ -128,6 +131,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		memberDepositLog.setBalance(member.getMoney());
 		memberDepositLog.setMemo(memo);
 		memberDepositLog.setMember(member);
+		memberDepositLog.setApp(member.getApp());
 		memberDepositLogDao.persist(memberDepositLog);
 	}
 
@@ -153,6 +157,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 
 		PointLog pointLog = new PointLog();
 		pointLog.setType(type);
+		pointLog.setApp(member.getApp());
 		pointLog.setCredit(amount > 0 ? amount : 0L);
 		pointLog.setDebit(amount < 0 ? Math.abs(amount) : 0L);
 		pointLog.setBalance(member.getPoint());

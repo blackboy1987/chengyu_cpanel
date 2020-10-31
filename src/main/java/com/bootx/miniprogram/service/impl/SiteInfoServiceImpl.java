@@ -37,4 +37,46 @@ public class SiteInfoServiceImpl extends BaseServiceImpl<SiteInfo, Long> impleme
 		}
 	}
 
+	@Override
+	public SiteInfo save(SiteInfo entity) {
+		SiteInfo siteInfo = super.save(entity);
+		EhCacheUtils.setCacheSiteInfo(siteInfo);
+		return siteInfo;
+	}
+
+	@Override
+	public SiteInfo update(SiteInfo entity) {
+		SiteInfo siteInfo = super.update(entity);
+		EhCacheUtils.setCacheSiteInfo(siteInfo);
+		return siteInfo;
+	}
+
+	@Override
+	public SiteInfo update(SiteInfo entity, String... ignoreProperties) {
+		SiteInfo siteInfo = super.update(entity, ignoreProperties);
+		EhCacheUtils.setCacheSiteInfo(siteInfo);
+		return siteInfo;
+	}
+
+	@Override
+	public void delete(Long id) {
+		EhCacheUtils.removeCacheVideo(id);
+		super.delete(id);
+	}
+
+	@Override
+	public void delete(Long... ids) {
+		for (Long id:ids) {
+			EhCacheUtils.removeCacheVideo(id);
+		}
+		super.delete(ids);
+	}
+
+	@Override
+	public void delete(SiteInfo siteInfo) {
+		if(siteInfo!=null){
+			EhCacheUtils.removeCacheVideo(siteInfo.getId());
+		}
+		super.delete(siteInfo);
+	}
 }

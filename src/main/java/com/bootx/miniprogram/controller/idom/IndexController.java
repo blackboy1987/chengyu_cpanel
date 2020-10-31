@@ -154,6 +154,7 @@ public class IndexController {
     @PostMapping("/redpackage")
     @JsonView(BaseEntity.ViewView.class)
     public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1) {
+        Map<String,Object> map = new HashMap<>();
         if(level1==null){
             level1 = 0;
         }
@@ -168,8 +169,9 @@ public class IndexController {
             memberService.update(member);
             // 写入红包记录
             memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
-
-            return Result.success(setScale(money));
+            map.put("money",setScale(money));
+            map.put("userInfo",memberService.getData(member));
+            return Result.success(map);
         }
         return Result.error("");
     }
