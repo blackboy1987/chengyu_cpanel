@@ -91,6 +91,14 @@ public class MemberDepositLog extends BaseEntity<Long> {
 	@JoinColumn(nullable = false, updatable = false)
 	private Member member;
 
+
+	/**
+	 * 会员
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(nullable = false, updatable = false)
+	private App app;
+
 	/**
 	 * 获取类型
 	 * 
@@ -205,4 +213,11 @@ public class MemberDepositLog extends BaseEntity<Long> {
 		this.member = member;
 	}
 
+	public App getApp() {
+		return app;
+	}
+
+	public void setApp(App app) {
+		this.app = app;
+	}
 }

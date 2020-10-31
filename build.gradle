@@ -33,6 +33,12 @@ dependencies {
 
     compile group: 'com.belerweb', name: 'pinyin4j', version: '2.5.1'
 
+    compile group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.6'
+    compile group: 'net.sf.ehcache', name: 'ehcache-web', version: '2.0.4'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '2.3.4.RELEASE'
+
+
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'mysql:mysql-connector-java'

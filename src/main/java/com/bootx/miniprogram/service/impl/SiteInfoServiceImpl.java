@@ -5,9 +5,12 @@ import com.bootx.miniprogram.dao.SiteInfoDao;
 import com.bootx.miniprogram.entity.App;
 import com.bootx.miniprogram.entity.SiteInfo;
 import com.bootx.miniprogram.service.SiteInfoService;
+import com.bootx.miniprogram.util.EhCacheUtils;
 import com.bootx.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Service - 素材目录
@@ -24,6 +27,14 @@ public class SiteInfoServiceImpl extends BaseServiceImpl<SiteInfo, Long> impleme
 	@Override
 	public SiteInfo find(App app) {
 		return siteInfoDao.find("app",app);
+	}
+
+	@Override
+	public void addCache() {
+		List<SiteInfo> siteInfos = super.findAll();
+		for (SiteInfo siteInfo:siteInfos) {
+			EhCacheUtils.setCacheSiteInfo(siteInfo);
+		}
 	}
 
 }

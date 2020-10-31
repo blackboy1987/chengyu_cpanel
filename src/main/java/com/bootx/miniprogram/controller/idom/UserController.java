@@ -24,16 +24,10 @@ public class UserController {
         return Result.success(memberService.getData(member));
     }
     @PostMapping("/update")
-    public Result update(Long id,String nickName,Integer gender,String city,String province,String country,String avatarUrl){
+    public Result update(Long id){
         Member member = memberService.find(id);
         if(member!=null){
-            member.setIsAuth(true);
-            member.setNickName(nickName);
-            member.setGender(gender);
-            member.setCity(city);
-            member.setProvince(province);
-            member.setCountry(country);
-            member.setAvatarUrl(avatarUrl);
+            member.setPoint(10000L);
             memberService.update(member);
             return Result.success(memberService.getData(member));
         }

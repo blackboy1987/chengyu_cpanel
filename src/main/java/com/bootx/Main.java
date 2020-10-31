@@ -21,19 +21,11 @@ public class Main {
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
                 if(StringUtils.isNotEmpty(line)){
-                    System.out.println(line);
                     String part1 = line.split("释义：")[0];
                     String[] part2 = part1.split("拼音：");
                     if(part2.length==2){
                         idioms.add(part2);
                         count++;
-                    }
-
-                    // 解析出来 释义
-                    Integer index1 = line.indexOf("释义：");
-                    Integer index2 = line.indexOf("出处：");
-                    if(index1>0&&index2>0&&(index1+3)<index2){
-                        System.out.println(line.substring(index1+3,index2));
                     }
                 }
             }
@@ -41,10 +33,7 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return idioms;
-    }
 
-    public static void main(String[] args) {
-        main();
+        return idioms;
     }
 }

@@ -84,9 +84,6 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 	@Override
 	public Map<String, Object> getData(Member member) {
 		Map<String,Object> data = new HashMap<>();
-		if(member==null){
-			return data;
-		}
 		data.put("nickName",member.getNickName());
 		data.put("money",setScale(member.getMoney()));
 		data.put("point",member.getPoint());
@@ -96,9 +93,6 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		data.put("houseIndex",member.getHouseIndex());
 		data.put("jobIndex",member.getJobIndex());
 		data.put("isAuth",member.getIsAuth());
-		data.put("wechat",member.getWechat());
-		data.put("mobile",member.getMobile());
-		data.put("name",member.getName());
 		return data;
 	}
 

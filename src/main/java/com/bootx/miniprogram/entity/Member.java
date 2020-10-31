@@ -84,10 +84,6 @@ public class Member extends BaseEntity<Long> {
     @Column(updatable = false)
     private Long parentId;
 
-    @NotNull
-    @Column(nullable = false)
-    private Boolean isAuth;
-
     /**
      * 消费金额
      */

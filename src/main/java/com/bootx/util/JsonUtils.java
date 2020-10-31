@@ -141,7 +141,7 @@ public final class JsonUtils {
 
 		try {
 			return OBJECT_MAPPER.readTree(json);
-		} catch (JsonProcessingException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 	 	}
 	}

@@ -14,4 +14,6 @@ import com.bootx.service.BaseService;
 public interface SiteInfoService extends BaseService<SiteInfo,Long> {
 
     SiteInfo find(App app);
+
+    void addCache();
 }

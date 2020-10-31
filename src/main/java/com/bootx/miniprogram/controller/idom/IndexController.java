@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -140,7 +139,7 @@ public class IndexController {
             return Result.error("积分余额不足");
         }
         memberService.addPoint(member,-deductionPoint, PointLog.Type.adjustment,"游戏扣除积分");
-        return Result.success(memberService.getData(member));
+        return Result.success("");
     }
 
 
@@ -165,40 +164,31 @@ public class IndexController {
         if(level1>=everyLevelReward){
             BigDecimal money = new BigDecimal(Math.random()*everyLevelRewardMoney);
             Member member = memberService.findByUserTokenAndApp(userToken,app);
+            member.setMoney(member.getMoney().add(money));
+            memberService.update(member);
             // 写入红包记录
             memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
-            // 上一级奖励
-            if(member.getParentId()!=null){
-                Member parent = memberService.find(member.getParentId());
-                if(parent!=null){
-                    memberService.addBalance(parent,money.multiply(new BigDecimal(0.05)), MemberDepositLog.Type.reward,member.getNickName()+"过关,奖励");
-                }
-            }
 
-            Map<String, Object> data = new HashMap<>();
-            data.put("money",setScale(money));
-            data.put("userInfo",memberService.getData(member));
-            return Result.success(data);
+            return Result.success(setScale(money));
         }
         return Result.error("");
     }
 
     @PostMapping("/share")
     @JsonView(BaseEntity.ViewView.class)
-    public Result share (String appCode, String appSecret, String userToken,Long parentId) {
+    public Result redpackage (String appCode, String appSecret, String userToken,Long parentId) {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
-        if(member!=null&&member.getParentId()==null && member.getId().compareTo(parentId)!=0){
-            Member parent = memberService.find(parentId);
-            if(parent==null){
-                return Result.success("");
-            }
+        Member parent = memberService.find(parentId);
+        if(member!=null&&parent==null&&member.getParentId()==null && member.getId().compareTo(parentId)!=0){
             member.setParentId(parentId);
             memberService.update(member);
             // 积分奖励
             SiteInfo siteInfo = app.getSiteInfo();
             Integer shareRewardPoint = Integer.valueOf(siteInfo.getExtras().get("shareRewardPoint").toString());
             if(shareRewardPoint>0){
+                parent.setPoint(parent.getPoint()+shareRewardPoint);
+                memberService.update(parent);
                 memberService.addPoint(parent,shareRewardPoint, PointLog.Type.reward,"分享奖励积分");
             }
         }
@@ -223,6 +213,14 @@ public class IndexController {
         return Result.success(result);
     }
 
+    @PostMapping("/reward_notice")
+    @JsonView(BaseEntity.ViewView.class)
+    public Result rewardNotice (String appCode, String appSecret) {
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select avatar_url,nick_name,level from member where app_id=? ",1);
+        return Result.success(list);
+    }
+
 
     private BigDecimal setScale(BigDecimal amount) {
         return amount.setScale(2, BigDecimal.ROUND_UP);
@@ -237,38 +235,6 @@ public class IndexController {
         return ganrao;
     }
 
-    @GetMapping("/random")
-    private Result random(){
-        for (int page=1;page<101;page++){
-            String sql = "SELECT id FROM idiom1 WHERE `level`>2000000 AND id >= ((SELECT MAX(id) FROM idiom1)-(SELECT MIN(id) FROM idiom1)) * RAND() + (SELECT MIN(id) FROM idiom1)  LIMIT 330";
-            String sql1 = "SELECT max(`level`) maxLevel FROM idiom1 where `level`<2000000;";
-
-            List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
-            List<Map<String, Object>> maxLevel = jdbcTemplate.queryForList(sql1);
-            Integer level = 0;
-            if(maxLevel!=null&&maxLevel.size()==1){
-                if(maxLevel.get(0).get("maxLevel")!=null){
-                    level = Integer.valueOf(""+maxLevel.get(0).get("maxLevel"));
-                }
-            }
-
-            for (Map map:maps) {
-                Long id = Long.valueOf(map.get("id")+"");
-                Idiom1 idiom1 = idiom1Service.find(id);
-                if(idiom1!=null){
-                    level = level+1;
-                    idiom1.setLevel(level);
-                    // 设置position
-                    idiom1.setPosition(new Random().nextInt(idiom1.getText().size()));
-                    idiom1Service.update(idiom1);
-                }
-            }
-
-            System.out.println(maxLevel+":"+page+":"+maps.size());
-        }
-
-        return Result.success("ok");
-    }
 
     @PostMapping("/adjust")
     public Result adjust(String appCode, String appSecret, String userToken, Long point, String memo){

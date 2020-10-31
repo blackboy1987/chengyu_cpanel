@@ -2,7 +2,7 @@ server:
   port: 9900
 spring:
   profiles:
-    active: release
+    active: dev
   messages:
     encoding: utf-8
   main:
@@ -13,4 +13,4 @@ spring:
         hbm2ddl:
           auto: update
         dialect: org.hibernate.dialect.MySQL5Dialect
-    show-sql: true
+    show-sql: false
