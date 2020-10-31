@@ -76,20 +76,16 @@ public class IndexController {
             level = 0;
         }
         Idiom1 idiom = idiom1Service.findByLeve(level+1);
-        String idiomStr = StringUtils.join(idiom.getText(),"");
-        char[] chars = idiomStr.toCharArray();
-        // 干扰词
-        Integer position = new Random().nextInt(4);
-        char text = chars[position];
-        Word word = wordService.findByText(text+"");
+        String text = idiom.getText().get(idiom.getPosition());
+        Word word = wordService.findByText(text);
         List<String> ganrao = getGanRao(word);
-        ganrao.add(text+"");
+        ganrao.add(text);
         Collections.shuffle(ganrao);
         Collections.shuffle(ganrao);
-        data.put("idiom",idiomStr);
+        data.put("idiom",idiom.getText());
         data.put("answers",ganrao);
         data.put("level",level+1);
-        data.put("position",position);
+        data.put("position",idiom.getPosition());
         return Result.success(data);
     }
 
@@ -165,8 +161,6 @@ public class IndexController {
         if(level1>=everyLevelReward){
             BigDecimal money = new BigDecimal(Math.random()*everyLevelRewardMoney);
             Member member = memberService.findByUserTokenAndApp(userToken,app);
-            member.setMoney(member.getMoney().add(money));
-            memberService.update(member);
             // 写入红包记录
             memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
             map.put("money",setScale(money));
@@ -189,7 +183,6 @@ public class IndexController {
             SiteInfo siteInfo = app.getSiteInfo();
             Integer shareRewardPoint = Integer.valueOf(siteInfo.getExtras().get("shareRewardPoint").toString());
             if(shareRewardPoint>0){
-                parent.setPoint(parent.getPoint()+shareRewardPoint);
                 memberService.update(parent);
                 memberService.addPoint(parent,shareRewardPoint, PointLog.Type.reward,"分享奖励积分");
             }
