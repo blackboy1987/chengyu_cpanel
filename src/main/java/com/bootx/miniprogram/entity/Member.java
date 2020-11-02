@@ -84,6 +84,7 @@ public class Member extends BaseEntity<Long> {
     @Column(updatable = false)
     private Long parentId;
 
+    @Lob
     @Convert(converter = ParentIdsConverter.class)
     private List<Long> parentIds = new ArrayList<>();
 
