@@ -1,15 +1,10 @@
-/*
- * Copyright 2008-2018 shopxx.net. All rights reserved.
- * Support: localhost
- * License: localhost/license
- * FileId: bgt5awDludfsjBEW+J8LwWa9ldZcevdc
- */
+
 package com.bootx.controller;
 
 import com.bootx.common.Result;
 import com.bootx.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 6.1
  */
 @RestController("adminCacheController")
-@RequestMapping("/admin/cache")
+@RequestMapping("/idiom/cache")
 public class CacheController extends BaseController {
 
 	@Autowired
@@ -29,13 +24,13 @@ public class CacheController extends BaseController {
 	/**
 	 * 清除缓存
 	 */
-	@GetMapping("/clear")
+	@PostMapping("/clear")
 	public Result clear() {
 		cacheService.clear();
 		return Result.success("");
 	}
 
-	@GetMapping("/info")
+	@PostMapping("/info")
 	public Result info() {
 		return Result.success(cacheService.info());
 	}

@@ -1,14 +1,14 @@
 package com.bootx.miniprogram.entity;
 
+import com.bootx.common.BaseAttributeConverter;
 import com.bootx.entity.BaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member extends BaseEntity<Long> {
@@ -83,6 +83,9 @@ public class Member extends BaseEntity<Long> {
 
     @Column(updatable = false)
     private Long parentId;
+
+    @Convert(converter = ParentIdsConverter.class)
+    private List<Long> parentIds = new ArrayList<>();
 
     /**
      * 消费金额
@@ -290,5 +293,17 @@ public class Member extends BaseEntity<Long> {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public List<Long> getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(List<Long> parentIds) {
+        this.parentIds = parentIds;
+    }
+
+    @Converter
+    public static class ParentIdsConverter extends BaseAttributeConverter<List<Long>> {
     }
 }

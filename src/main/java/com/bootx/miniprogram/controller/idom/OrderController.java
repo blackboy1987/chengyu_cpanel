@@ -6,6 +6,7 @@ import com.bootx.miniprogram.service.AppService;
 import com.bootx.miniprogram.service.MemberService;
 import com.bootx.miniprogram.service.OrderService;
 import com.bootx.miniprogram.service.ProductService;
+import com.bootx.service.SnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController("miniprogramIdiomOrderController")
@@ -28,6 +31,8 @@ public class OrderController {
     private ProductService productService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private SnService snService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -55,6 +60,9 @@ public class OrderController {
 
 
         Order order = new Order();
+        order.setApp(product.getApp());
+        order.setProductImage(product.getImage());
+        order.setSn(snService.generate(Sn.Type.ORDER));
         order.setQuantity(1);
         order.setAmount(product.getPrice().multiply(new BigDecimal(order.getQuantity())));
         order.setMember(member);
@@ -70,6 +78,18 @@ public class OrderController {
         data.put("code",0);
         return Result.success(data);
 
+
+    }
+
+    @PostMapping("/list")
+    public Result list(String code, String appCode, String appSecret,String userToken){
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        Member member = memberService.findByUserTokenAndApp(userToken,app);
+        if(member!=null){
+            List<Map<String, Object>> products = jdbcTemplate.queryForList("select status, product_name,product_price,amount,quantity,app_id,sn,product_image from orders where member_id=? and app_id=? ORDER BY created_date DESC;",member.getId(), app.getId());
+            return Result.success(products);
+        }
+        return Result.success(Collections.emptyList());
 
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController("miniprogramIdiomIndexController")
 @RequestMapping("/idiom/api")
@@ -149,7 +150,7 @@ public class IndexController {
      */
     @PostMapping("/redpackage")
     @JsonView(BaseEntity.ViewView.class)
-    public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1) {
+    public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1,Long parentId) {
         Map<String,Object> map = new HashMap<>();
         if(level1==null){
             level1 = 0;
@@ -165,9 +166,37 @@ public class IndexController {
             memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
             map.put("money",setScale(money));
             map.put("userInfo",memberService.getData(member));
+
+            // 写入推荐人和其他相关人员的奖励
+            distributionReward(money,member,parentId);
+
+
             return Result.success(map);
         }
         return Result.error("");
+    }
+
+    private void distributionReward(BigDecimal money, Member member,Long parentId) {
+        Member parent = memberService.find(member.getParentId());
+        if(parent==null){
+            parent = memberService.find(parentId);
+            if(parent!=null){
+                // 设置推荐人
+                member.setParentId(parentId);
+                memberService.update(member);
+                memberService.addBalance(parent,money.multiply(new BigDecimal(0.05)), MemberDepositLog.Type.reward,member.getNickName()+"过关,奖励");
+            }
+        }else{
+            memberService.addBalance(parent,money.multiply(new BigDecimal(0.05)), MemberDepositLog.Type.reward,member.getNickName()+"过关,奖励");
+        }
+        List<Long> ids = member.getParentIds();
+        for (Long id:ids) {
+            Member parent1 = memberService.find(id);
+            if(parent1!=null){
+                memberService.addBalance(parent1,money.multiply(new BigDecimal(0.03)).divide(new BigDecimal(ids.size()),1), MemberDepositLog.Type.reward,member.getNickName()+"过关，通用奖励");
+            }
+
+        }
     }
 
     @PostMapping("/share")
@@ -176,6 +205,7 @@ public class IndexController {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
         Member parent = memberService.find(parentId);
+        // 设置推荐人和积分奖励
         if(member!=null&&parent==null&&member.getParentId()==null && member.getId().compareTo(parentId)!=0){
             member.setParentId(parentId);
             memberService.update(member);
@@ -187,6 +217,16 @@ public class IndexController {
                 memberService.addPoint(parent,shareRewardPoint, PointLog.Type.reward,"分享奖励积分");
             }
         }
+        // 写入到parentIds中
+        List<Long> parentIds = member.getParentIds();
+        if(parentId!=null&&!parentIds.contains(parentId)&&parentId.compareTo(member.getParentId())!=0){
+            parentIds.add(parentId);
+            member.setParentIds(parentIds);
+            memberService.update(member);
+        }
+
+
+
         return Result.success("");
     }
     @PostMapping("/rank")
@@ -212,8 +252,15 @@ public class IndexController {
     @JsonView(BaseEntity.ViewView.class)
     public Result rewardNotice (String appCode, String appSecret) {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
-        List<Map<String,Object>> list = jdbcTemplate.queryForList("select avatar_url,nick_name,level from member where app_id=? ",1);
-        return Result.success(list);
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select X.credit,X.member_id from (select FORMAT(credit, 2) credit,member_id, count(distinct member_id) from member_deposit_log WHERE app_id=? and credit>0 group by member_id LIMIT 5) as X where credit>0;",app.getId());
+        List<Map<String, Object>> result = list.stream().map(item -> {
+            item.put("nickName", memberService.find(Long.valueOf(item.get("member_id") + "")).getNickName());
+
+            return item;
+        }).collect(Collectors.toList());
+
+
+        return Result.success(result);
     }
 
 
@@ -258,5 +305,13 @@ public class IndexController {
         }
         data.put("userInfo",memberService.getData(member));
         return Result.success(data);
+    }
+
+
+    @PostMapping("/more_game")
+    public Result moreGame(String appCode, String appSecret){
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        List<Map<String, Object>> list = jdbcTemplate.queryForList("select logo,memo,`name`,path,app_id1 appId from more_game WHERE is_enabled=true and app_id=? ORDER BY orders ASC;", app.getId());
+        return Result.success(list);
     }
 }

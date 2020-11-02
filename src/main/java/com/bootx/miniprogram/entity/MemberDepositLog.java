@@ -60,21 +60,21 @@ public class MemberDepositLog extends BaseEntity<Long> {
 	 * 收入金额
 	 */
 	@JsonView(BaseView.class)
-	@Column(nullable = false, updatable = false, precision = 21, scale = 6)
+	@Column(nullable = false, updatable = false, precision = 21, scale = 12)
 	private BigDecimal credit;
 
 	/**
 	 * 支出金额
 	 */
 	@JsonView(BaseView.class)
-	@Column(nullable = false, updatable = false, precision = 21, scale = 6)
+	@Column(nullable = false, updatable = false, precision = 21, scale = 12)
 	private BigDecimal debit;
 
 	/**
 	 * 当前余额
 	 */
 	@JsonView(BaseView.class)
-	@Column(nullable = false, updatable = false, precision = 21, scale = 6)
+	@Column(nullable = false, updatable = false, precision = 21, scale = 12)
 	private BigDecimal balance;
 
 	/**

@@ -54,7 +54,11 @@ public class CacheServiceImpl implements CacheService {
 	}
 	@Override
 	public void clear() {
-		cacheManager.removeAllCaches();
+		List<Map<String,Object>> list = new ArrayList<>();
+		String [] cacheNames = cacheManager.getCacheNames();
+		for (String cacheName:cacheNames) {
+			cacheManager.getCache(cacheName).removeAll();
+		}
 	}
 
 	@Override

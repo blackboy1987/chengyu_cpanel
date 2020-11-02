@@ -1,6 +1,7 @@
 package com.bootx.miniprogram.entity;
 
 import com.bootx.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -8,6 +9,13 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity<Long> {
+
+    /**
+     * 编号
+     */
+    @JsonView(BaseView.class)
+    @Column(nullable = false, updatable = false, unique = true)
+    private String sn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -22,6 +30,9 @@ public class Order extends BaseEntity<Long> {
 
     private String productName;
 
+
+    private String productImage;
+
     @Column(nullable = false, precision = 27, scale = 12)
     private BigDecimal productPrice;
 
@@ -30,6 +41,25 @@ public class Order extends BaseEntity<Long> {
 
     @Column(nullable = false, precision = 27, scale = 12)
     private BigDecimal amount;
+
+    /**
+     * 获取编号
+     *
+     * @return 编号
+     */
+    public String getSn() {
+        return sn;
+    }
+
+    /**
+     * 设置编号
+     *
+     * @param sn
+     *            编号
+     */
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
 
     public Member getMember() {
         return member;
@@ -69,6 +99,14 @@ public class Order extends BaseEntity<Long> {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
     }
 
     public BigDecimal getProductPrice() {
