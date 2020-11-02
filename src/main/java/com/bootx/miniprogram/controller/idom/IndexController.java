@@ -270,7 +270,7 @@ public class IndexController {
 
     private List<String> getGanRao(Word word) {
         List<String> ganrao = new ArrayList<>();
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList("SELECT DISTINCT(text) FROM word WHERE  pin_yin='" + word.getPinYin() + "' AND id >= ((SELECT MAX(id) FROM word)-(SELECT MIN(id) FROM word)) * RAND() + (SELECT MIN(id) FROM word)  LIMIT 3");
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList("SELECT DISTINCT(text) FROM word WHERE  pin_yin='" + word.getPinYin() + "' and text !='"+word.getText()+"' AND id >= ((SELECT MAX(id) FROM word)-(SELECT MIN(id) FROM word)) * RAND() + (SELECT MIN(id) FROM word)  LIMIT 3");
         maps.stream().forEach(map->{
             ganrao.add(map.get("text")+"");
         });

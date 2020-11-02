@@ -116,6 +116,11 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			return;
 		}
 
+		if(!member.getIsAuth()){
+			return;
+		}
+
+
 		if (!LockModeType.PESSIMISTIC_WRITE.equals(memberDao.getLockMode(member))) {
 			memberDao.flush();
 			memberDao.refresh(member, LockModeType.PESSIMISTIC_WRITE);
