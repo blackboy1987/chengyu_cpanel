@@ -4,19 +4,24 @@ import com.bootx.Main;
 import com.bootx.common.Result;
 import com.bootx.entity.BaseEntity;
 import com.bootx.miniprogram.entity.*;
-import com.bootx.miniprogram.service.AppService;
-import com.bootx.miniprogram.service.Idiom1Service;
-import com.bootx.miniprogram.service.MemberService;
-import com.bootx.miniprogram.service.WordService;
+import com.bootx.miniprogram.service.*;
+import com.bootx.util.DateUtils;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +41,9 @@ public class IndexController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PlayRecordService playRecordService;
 
     @PostMapping("/index")
     private Result index() throws Exception{
@@ -72,12 +80,16 @@ public class IndexController {
         Map<String,Object> data = new HashMap<>();
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
+        if(member==null){
+            return Result.error("请先登录");
+        }
         Integer level = member.getLevel();
         if(level==null){
             level = 0;
         }
         Idiom1 idiom = idiom1Service.findByLeve(level+1);
         String text = idiom.getText().get(idiom.getPosition());
+        System.out.println("text:"+text+":"+idiom.getPosition()+":"+idiom.getText());
         Word word = wordService.findByText(text);
         List<String> ganrao = getGanRao(word);
         ganrao.add(text);
@@ -105,8 +117,33 @@ public class IndexController {
         Member member = memberService.findByUserTokenAndApp(userToken,app);
         member.setLevel(level);
         memberService.update(member);
+        PlayRecord playRecord = playRecordService.findToday(member);
+        if(playRecord==null){
+            playRecord = playRecordService.create(member);
+        }
+        playRecord.setLevelCount(playRecord.getLevelCount()+1);
+        playRecord.setContinuousLeveCount(playRecord.getContinuousLeveCount()+1);
+        playRecordService.update(playRecord);
         return Result.success(checkRedPackage(app,levelCount));
     }
+
+
+    @PostMapping("/error")
+    @JsonView(BaseEntity.ViewView.class)
+    public Result error (String appCode, String appSecret, String userToken,Integer level,Integer levelCount) {
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        Member member = memberService.findByUserTokenAndApp(userToken,app);
+        PlayRecord playRecord = playRecordService.findToday(member);
+        if(playRecord==null){
+            playRecord = playRecordService.create(member);
+        }
+        playRecord.setContinuousLeveCount(0);
+        playRecordService.update(playRecord);
+        return Result.success("");
+    }
+
+
+
 
     private Boolean checkRedPackage(App app,Integer levelCount){
         SiteInfo siteInfo = app.getSiteInfo();
@@ -150,7 +187,10 @@ public class IndexController {
      */
     @PostMapping("/redpackage")
     @JsonView(BaseEntity.ViewView.class)
-    public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1,Long parentId) {
+    public Result redpackage (String appCode, String appSecret, String userToken,Integer level,Integer level1,Long parentId,Integer openRedPackageType) {
+        if(openRedPackageType==null){
+            openRedPackageType = 0;
+        }
         Map<String,Object> map = new HashMap<>();
         if(level1==null){
             level1 = 0;
@@ -161,9 +201,23 @@ public class IndexController {
         Double everyLevelRewardMoney = Double.valueOf(siteInfo.getExtras().get("everyLevelRewardMoney").toString());
         if(level1>=everyLevelReward){
             BigDecimal money = new BigDecimal(Math.random()*everyLevelRewardMoney);
+            String memo="过关奖励："+money;
+            if(openRedPackageType==1){
+                money = money.add(money);
+                memo=memo+",翻倍奖励："+money;
+            }
             Member member = memberService.findByUserTokenAndApp(userToken,app);
             // 写入红包记录
-            memberService.addBalance(member,money, MemberDepositLog.Type.reward,"过关奖励");
+            memberService.addBalance(member,money, MemberDepositLog.Type.reward,memo);
+            PlayRecord playRecord = playRecordService.findToday(member);
+            if(playRecord==null){
+                playRecord = playRecordService.create(member);
+            }
+            playRecord.setMoney(playRecord.getMoney().add(money));
+            playRecordService.update(playRecord);
+
+
+
             map.put("money",setScale(money));
             map.put("userInfo",memberService.getData(member));
 
@@ -195,7 +249,6 @@ public class IndexController {
             if(parent1!=null){
                 memberService.addBalance(parent1,money.multiply(new BigDecimal(0.03)).divide(new BigDecimal(ids.size()),1), MemberDepositLog.Type.reward,member.getNickName()+"过关，通用奖励");
             }
-
         }
     }
 
@@ -219,7 +272,7 @@ public class IndexController {
         }
         // 写入到parentIds中
         List<Long> parentIds = member.getParentIds();
-        if(parentId!=null&&!parentIds.contains(parentId)&&parentId.compareTo(member.getParentId())!=0){
+        if(member!=null&&parentIds!=null&&member.getParentId()!=null&&parentId!=null&&!parentIds.contains(parentId)&&parentId.compareTo(member.getParentId())!=0){
             parentIds.add(parentId);
             member.setParentIds(parentIds);
             memberService.update(member);
@@ -270,7 +323,8 @@ public class IndexController {
 
     private List<String> getGanRao(Word word) {
         List<String> ganrao = new ArrayList<>();
-        List<Map<String, Object>> maps = jdbcTemplate.queryForList("SELECT DISTINCT(text) FROM word WHERE  pin_yin='" + word.getPinYin() + "' and text !='"+word.getText()+"' AND id >= ((SELECT MAX(id) FROM word)-(SELECT MIN(id) FROM word)) * RAND() + (SELECT MIN(id) FROM word)  LIMIT 3");
+        String sql = "SELECT DISTINCT(text) FROM word WHERE  pin_yin='" + word.getPinYin() + "' and text !='"+word.getText()+"' AND id >= ((SELECT MAX(id) FROM word)-(SELECT MIN(id) FROM word)) * RAND() + (SELECT MIN(id) FROM word)  LIMIT 3";
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
         maps.stream().forEach(map->{
             ganrao.add(map.get("text")+"");
         });
@@ -283,6 +337,15 @@ public class IndexController {
         Map<String,Object> data = new HashMap<>();
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
+        Map<String, Object> map = jdbcTemplate.queryForMap("select DATE_FORMAT(created_date,'%Y-%m-%d %H:%i:%S') created_date from point_log where app_id=? and member_id=? and credit>0 ORDER BY created_date DESC LIMIT 1;", app.getId(), member.getId());
+        Date latest = DateUtils.getNextSeconds(-60);
+        try{
+            latest = DateUtils.formatStringToDate(map.get("created_date")+"","yyyy-MM-dd HH:mm:ss");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         data.put("code",0);
         if(app == null){
             data.put("code",-1);
@@ -301,7 +364,12 @@ public class IndexController {
         if(member.getPoint()+point>0){
             // 积分调整
             data.put("code",0);
-            memberService.addPoint(member,browseVideoRewardPoint, PointLog.Type.adjustment,memo);
+            // 最近5秒钟只能获取一次奖励
+            System.out.println(new Date()+":"+latest+":"+(new Date().getTime()-latest.getTime()));
+            if(new Date().getTime()-latest.getTime()>=1000*60){
+                memberService.addPoint(member,browseVideoRewardPoint, PointLog.Type.adjustment,memo);
+            }
+
         }
         data.put("userInfo",memberService.getData(member));
         return Result.success(data);
@@ -313,5 +381,237 @@ public class IndexController {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         List<Map<String, Object>> list = jdbcTemplate.queryForList("select logo,memo,`name`,path,app_id1 appId from more_game WHERE is_enabled=true and app_id=? ORDER BY orders ASC;", app.getId());
         return Result.success(list);
+    }
+
+
+
+
+    @GetMapping("/demo1234")
+    public Result demo1234(){
+        List<Idiom1> all = idiom1Service.findAll();
+        for (Idiom1 idiom1:all) {
+            idiom1.setFullText(StringUtils.join(idiom1.getText(),""));
+            jdbcTemplate.update("update idiom1 set full_text=? where id=?",idiom1.getFullText(),idiom1.getId());
+
+        }
+
+        return Result.success("");
+    }
+
+
+    @GetMapping("/demo1")
+    public Result demo1() throws IOException {
+        int level = 30804;
+        for (int i = 1; i <= 1000; i++) {
+            Idiom1 idiom1 = new Idiom1();
+            Document document = Jsoup.parse(new URL("http://cy.5156edu.com/html4/" + i + ".html"), 20000);
+            Element table3 = document.getElementById("table3");
+            if(table3==null){
+                continue;
+            }
+            Element tbody = table3.getElementsByTag("tbody").first();
+            if(tbody!=null){
+                tbody = tbody.getElementsByTag("table").first().getElementsByTag("tbody").first();
+            }
+
+
+            try {
+                Elements trs = tbody.getElementsByTag("tr");
+                Element tr0 = trs.get(0);
+                if(tr0!=null){
+                    String text = tr0.text();
+                    idiom1.setFullText(text);
+                }else{
+                    continue;
+                }
+
+                Element tr1 = trs.get(1);
+                if(tr1!=null){
+                    Elements tds = tr1.getElementsByTag("td");
+                    // 拼音
+                    Element td1 = tds.get(1);
+                    idiom1.setPinYin(Arrays.asList(td1.text().split(" ")));
+                    // 简拼
+                    Element td3 = tds.get(3);
+                    idiom1.setJianPin(td3.text());
+                }else{
+                    continue;
+                }
+
+
+                Element tr2 = trs.get(2);
+                if(tr2!=null){
+                    Elements tds = tr2.getElementsByTag("td");
+                    // 近义词
+                    Element td1 = tds.get(1);
+                    idiom1.setJinYiCi(td1.text());
+                    // 反义词
+                    Element td3 = tds.get(3);
+                    idiom1.setFanYiCi(td3.text());
+                }else{
+                    continue;
+                }
+
+                // 用法
+                Element tr3 = trs.get(3);
+                if(tr3!=null){
+                    Elements tds = tr3.getElementsByTag("td");
+                    // 用法
+                    Element td1 = tds.get(1);
+                    idiom1.setYongFa(td1.text());
+                }else{
+                    continue;
+                }
+
+                // 解释
+                Element tr4 = trs.get(4);
+                if(tr4!=null){
+                    Elements tds = tr4.getElementsByTag("td");
+                    // 解释
+                    Element td1 = tds.get(1);
+                    idiom1.setJieSi(td1.text());
+                }else{
+                    continue;
+                }
+                // 出处
+                Element tr5 = trs.get(5);
+                if(tr5!=null){
+                    Elements tds = tr5.getElementsByTag("td");
+                    // 出处
+                    Element td1 = tds.get(1);
+                    idiom1.setChuChu(td1.text());
+                }else{
+                    continue;
+                }
+                // 例子
+                Element tr6 = trs.get(6);
+                if(tr6!=null){
+                    Elements tds = tr6.getElementsByTag("td");
+                    // 例子
+                    Element td1 = tds.get(1);
+                    idiom1.setLiZi(td1.text());
+                }else{
+                    continue;
+                }
+                // 歇后语
+                Element tr7 = trs.get(7);
+                if(tr7!=null){
+                    Elements tds = tr7.getElementsByTag("td");
+                    // 歇后语
+                    Element td1 = tds.get(1);
+                    idiom1.setXieHouYu(td1.text());
+                }else{
+                    continue;
+                }
+
+                // 谜语
+                Element tr8 = trs.get(8);
+                if(tr8!=null){
+                    Elements tds = tr8.getElementsByTag("td");
+                    // 谜语
+                    Element td1 = tds.get(1);
+                    idiom1.setMiYu(td1.text());
+                }else{
+                    continue;
+                }
+                // 成语故事
+                Element tr9 = trs.get(9);
+                if(tr9!=null){
+                    Elements tds = tr9.getElementsByTag("td");
+                    // 成语故事
+                    Element td1 = tds.get(1);
+                    idiom1.setChengYuGuShi(td1.text());
+                }else{
+                    continue;
+                }
+                Idiom1 idiom11 = idiom1Service.findByFullText(idiom1.getFullText());
+                if(idiom11!=null){
+                    idiom11.setChengYuGuShi(idiom1.getChengYuGuShi());
+                    idiom11.setMiYu(idiom1.getMiYu());
+                    idiom11.setXieHouYu(idiom1.getXieHouYu());
+                    idiom11.setLiZi(idiom1.getLiZi());
+                    idiom11.setJieSi(idiom1.getJieSi());
+                    idiom11.setYongFa(idiom1.getYongFa());
+                    idiom11.setFanYiCi(idiom1.getFanYiCi());
+                    idiom11.setJinYiCi(idiom1.getJinYiCi());
+                    idiom11.setJianPin(idiom1.getJianPin());
+                    idiom1Service.update(idiom11);
+                }else{
+                    idiom1.setLevel(++level);
+                    idiom1.setPosition(0);
+                    System.out.println(idiom1.getFullText()+"===================================================================================================================================================================================="+i);
+                    idiom1Service.save(idiom1);
+                }
+            }catch (Exception e){
+                System.out.println("error===================================================================================================================================================================================="+i);
+            }
+        }
+
+
+
+        return Result.error("");
+    }
+
+
+    @GetMapping("/demo2")
+    public Result demo2() throws IOException {
+        int level = 30804;
+        for (int i = 1; i <= 1000; i++) {
+
+            String index = "";
+            if(i<10){
+                index="000"+i;
+            }else if(i<100){
+                index="00"+i;
+            }else if(i<1000){
+                index="0"+i;
+            }else if(i<10000){
+                index=""+i;
+            }
+
+
+            Idiom1 idiom1 = new Idiom1();
+            Document document = Jsoup.parse(new URL("http://www.hydcd.com/cy/chengyu/cy0" + index + ".htm"), 20000);
+            Element table1 = document.getElementById("table1");
+            if(table1==null){
+                continue;
+            }
+            Elements tds = table1.getElementsByTag("td");
+            if(tds==null){
+                continue;
+            }
+            for (Element td:tds) {
+                Elements a = td.getElementsByTag("a");
+                String url = a.attr("href").replace("..","http://www.hydcd.com/cy");
+                String text = a.text();
+
+            }
+            try {
+                Idiom1 idiom11 = idiom1Service.findByFullText(idiom1.getFullText());
+                if(idiom11!=null){
+                    idiom11.setChengYuGuShi(idiom1.getChengYuGuShi());
+                    idiom11.setMiYu(idiom1.getMiYu());
+                    idiom11.setXieHouYu(idiom1.getXieHouYu());
+                    idiom11.setLiZi(idiom1.getLiZi());
+                    idiom11.setJieSi(idiom1.getJieSi());
+                    idiom11.setYongFa(idiom1.getYongFa());
+                    idiom11.setFanYiCi(idiom1.getFanYiCi());
+                    idiom11.setJinYiCi(idiom1.getJinYiCi());
+                    idiom11.setJianPin(idiom1.getJianPin());
+                    idiom1Service.update(idiom11);
+                }else{
+                    idiom1.setLevel(++level);
+                    idiom1.setPosition(0);
+                    System.out.println(idiom1.getFullText()+"===================================================================================================================================================================================="+i);
+                    idiom1Service.save(idiom1);
+                }
+            }catch (Exception e){
+                System.out.println("error===================================================================================================================================================================================="+i);
+            }
+        }
+
+
+
+        return Result.error("");
     }
 }

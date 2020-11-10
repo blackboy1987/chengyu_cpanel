@@ -13,5 +13,5 @@ import com.bootx.service.BaseService;
 public interface Idiom1Service extends BaseService<Idiom1,Long> {
 
     Idiom1 findByLeve(Integer level);
-    Idiom1 findByText(String text);
+    Idiom1 findByFullText(String fullText);
 }

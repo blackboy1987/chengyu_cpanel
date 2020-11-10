@@ -86,11 +86,40 @@ public class DateUtils {
      * @return
      *      距离指定时间index天之后的时间
      */
-    public static Date getNextDay(Date date,Integer index) {
+    public static Date getNextDays(Date date,Integer index) {
         LocalDateTime localDateTime = convertDateToLocalDateTime(date);
         return convertLocalDateTimeToDate(localDateTime.plusDays(index));
     }
 
+    public static Date getNextHours(Date date,Integer index) {
+        LocalDateTime localDateTime = convertDateToLocalDateTime(date);
+        return convertLocalDateTimeToDate(localDateTime.plusHours(index));
+    }
+
+    public static Date getNextHours(Integer index) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return convertLocalDateTimeToDate(localDateTime.plusHours(index));
+    }
+
+    public static Date getNextMinutes(Date date,Integer index) {
+        LocalDateTime localDateTime = convertDateToLocalDateTime(date);
+        return convertLocalDateTimeToDate(localDateTime.plusMinutes(index));
+    }
+
+    public static Date getNextMinutes(Integer index) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return convertLocalDateTimeToDate(localDateTime.plusMinutes(index));
+    }
+
+    public static Date getNextSeconds(Date date,Integer index) {
+        LocalDateTime localDateTime = convertDateToLocalDateTime(date);
+        return convertLocalDateTimeToDate(localDateTime.plusSeconds(index));
+    }
+
+    public static Date getNextSeconds(Integer index) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return convertLocalDateTimeToDate(localDateTime.plusSeconds(index));
+    }
 
     /**
      * 距离当前时间index天之后的0点0分0秒

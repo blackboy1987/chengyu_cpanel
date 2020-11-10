@@ -26,8 +26,8 @@ public class Idiom1ServiceImpl extends BaseServiceImpl<Idiom1, Long> implements 
         return idiom1Dao.find("level",level);
     }
     @Override
-    public Idiom1 findByText(String text) {
-        return idiom1Dao.find("text",text);
+    public Idiom1 findByFullText(String fullText) {
+        return idiom1Dao.find("fullText",fullText);
     }
 
     @Override

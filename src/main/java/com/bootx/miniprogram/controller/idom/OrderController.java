@@ -55,7 +55,7 @@ public class OrderController {
             return Result.error(-1,"账户余额不足");
         }
 
-        product.setStock(product.getStock()+1);
+        product.setStock(product.getStock()-1);
         productService.update(product);
 
 
