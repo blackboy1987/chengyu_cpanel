@@ -2,6 +2,8 @@ package com.bootx.miniprogram.entity;
 
 import com.bootx.common.BaseAttributeConverter;
 import com.bootx.entity.BaseEntity;
+import com.github.binarywang.java.emoji.EmojiConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Entity
 public class Member extends BaseEntity<Long> {
+
+    private static final EmojiConverter emojiConverter = EmojiConverter.getInstance();
 
     @NotNull
     @Column(nullable = false,updatable = false,unique = true)
@@ -121,10 +125,16 @@ public class Member extends BaseEntity<Long> {
     }
 
     public String getNickName() {
+        if(StringUtils.isNotBlank(nickName)){
+            nickName = emojiConverter.toAlias(nickName);
+        }
         return nickName;
     }
 
     public void setNickName(String nickName) {
+        if(StringUtils.isNotBlank(nickName)){
+            nickName = emojiConverter.toUnicode(nickName);
+        }
         this.nickName = nickName;
     }
 

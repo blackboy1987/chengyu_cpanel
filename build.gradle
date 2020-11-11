@@ -37,7 +37,7 @@ dependencies {
     compile group: 'net.sf.ehcache', name: 'ehcache-web', version: '2.0.4'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '2.3.4.RELEASE'
 
-
+    compile 'com.github.binarywang:java-emoji-converter:1.0.1'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
