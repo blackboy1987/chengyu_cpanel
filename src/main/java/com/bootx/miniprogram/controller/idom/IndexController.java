@@ -5,7 +5,6 @@ import com.bootx.common.Result;
 import com.bootx.entity.BaseEntity;
 import com.bootx.miniprogram.entity.*;
 import com.bootx.miniprogram.service.*;
-import com.bootx.util.DateUtils;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -199,12 +198,18 @@ public class IndexController {
         SiteInfo siteInfo = app.getSiteInfo();
         Integer everyLevelReward = Integer.valueOf(siteInfo.getExtras().get("everyLevelReward").toString());
         Double everyLevelRewardMoney = Double.valueOf(siteInfo.getExtras().get("everyLevelRewardMoney").toString());
+        Double maxLevelRewardMoney = Double.valueOf(siteInfo.getExtras().get("maxLevelRewardMoney").toString());
         if(level1>=everyLevelReward){
             BigDecimal money = new BigDecimal(Math.random()*everyLevelRewardMoney);
             String memo="过关奖励："+money;
             if(openRedPackageType==1){
                 money = money.add(money);
                 memo=memo+",翻倍奖励："+money;
+            }
+            if(money.compareTo(new BigDecimal(0.01))<0){
+                money = new BigDecimal(0.01);
+            }else if(money.compareTo(new BigDecimal(maxLevelRewardMoney))>0){
+                money = new BigDecimal(maxLevelRewardMoney);
             }
             Member member = memberService.findByUserTokenAndApp(userToken,app);
             // 写入红包记录
@@ -337,15 +342,6 @@ public class IndexController {
         Map<String,Object> data = new HashMap<>();
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
-        Map<String, Object> map = jdbcTemplate.queryForMap("select DATE_FORMAT(created_date,'%Y-%m-%d %H:%i:%S') created_date from point_log where app_id=? and member_id=? and credit>0 ORDER BY created_date DESC LIMIT 1;", app.getId(), member.getId());
-        Date latest = DateUtils.getNextSeconds(-60);
-        try{
-            latest = DateUtils.formatStringToDate(map.get("created_date")+"","yyyy-MM-dd HH:mm:ss");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
         data.put("code",0);
         if(app == null){
             data.put("code",-1);
@@ -364,12 +360,7 @@ public class IndexController {
         if(member.getPoint()+point>0){
             // 积分调整
             data.put("code",0);
-            // 最近5秒钟只能获取一次奖励
-            System.out.println(new Date()+":"+latest+":"+(new Date().getTime()-latest.getTime()));
-            if(new Date().getTime()-latest.getTime()>=1000*60){
-                memberService.addPoint(member,browseVideoRewardPoint, PointLog.Type.adjustment,memo);
-            }
-
+            memberService.addPoint(member,browseVideoRewardPoint, PointLog.Type.adjustment,memo);
         }
         data.put("userInfo",memberService.getData(member));
         return Result.success(data);

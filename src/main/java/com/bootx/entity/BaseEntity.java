@@ -80,7 +80,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 	/**
 	 * ID
 	 */
-	@JsonView({BaseView.class,ListView.class})
+	@JsonView({BaseView.class,ListView.class,EditView.class,ViewView.class})
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private ID id;
@@ -88,7 +88,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 	/**
 	 * 创建日期
 	 */
-	@JsonView(BaseView.class)
+	@JsonView({BaseView.class,ListView.class})
 	@CreatedDate
 	@Field(store = Store.YES, index = Index.YES, analyze = Analyze.NO)
 	@DateBridge(resolution = Resolution.SECOND)
