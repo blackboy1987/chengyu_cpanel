@@ -55,6 +55,12 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 
 		Member member = memberDao.find("openId",openId);
 		if(member==null){
+			// {"firstLoginRewardMoney":1,"shareRewardPoint":600,"browseVideoRewardPoint":300,"everyLevelRewardMoney":0.08,"maxLevelRewardMoney":0.12,"deductionPoint":100,"everyLevelReward":5,"firstLoginRewardPoint":0}
+			SiteInfo siteInfo = app.getSiteInfo();
+			Long firstLoginRewardPoint = Long.valueOf(siteInfo.getExtras().get("firstLoginRewardPoint").toString());
+			Double firstLoginRewardMoney = Double.valueOf(siteInfo.getExtras().get("firstLoginRewardMoney").toString());
+
+
 			member = new Member();
 			member.setIsAuth(false);
 			member.setOpenId(openId);
@@ -69,7 +75,8 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			member.setJobIndex(0);
 			member.setMemberRank(memberRankService.findDefault());
 			member.setAmount(BigDecimal.ZERO);
-			member.setPoint(1000L);
+			member.setPoint(firstLoginRewardPoint);
+			member.setMoney(new BigDecimal(firstLoginRewardMoney));
 			return super.save(member);
 			// return member;
 		}

@@ -1,11 +1,16 @@
 package com.bootx;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,4 +41,34 @@ public class Main {
 
         return idioms;
     }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        int count = 0;
+        String [] strs = new String[]{
+             "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
+        };
+
+        for (String str:strs) {
+            for (int i=1;i<=60;i++){
+                String url = "http://www.esk365.com/chengyu/cysot.asp?t="+str+"&page="+i;
+                Thread.sleep(300);
+                System.out.println(str+"==============="+i);
+                Document document = Jsoup.parse(new URL(url), 5000);
+                Element ls_a5 = document.getElementsByClass("ls_a5").first();
+                if(ls_a5!=null){
+                    Elements li = ls_a5.getElementsByTag("li");
+                    for (Element element:li) {
+                        System.out.println(element.text());
+                        count ++;
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+
+        System.out.println("================================================================================="+count);
+
+    }
+
 }

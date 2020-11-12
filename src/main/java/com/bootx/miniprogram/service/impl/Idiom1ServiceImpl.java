@@ -7,6 +7,7 @@ import com.bootx.miniprogram.service.Idiom1Service;
 import com.bootx.miniprogram.util.EhCacheUtils;
 import com.bootx.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,6 +23,7 @@ public class Idiom1ServiceImpl extends BaseServiceImpl<Idiom1, Long> implements 
     private Idiom1Dao idiom1Dao;
 
     @Override
+    @Cacheable(value = "idiom",key = "#level")
     public Idiom1 findByLeve(Integer level) {
         return idiom1Dao.find("level",level);
     }
