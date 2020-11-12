@@ -1,6 +1,5 @@
 package com.bootx.miniprogram.controller.idom;
 
-import com.bootx.Main;
 import com.bootx.common.Result;
 import com.bootx.entity.BaseEntity;
 import com.bootx.miniprogram.entity.*;
@@ -44,35 +43,6 @@ public class IndexController {
 
     @Autowired
     private PlayRecordService playRecordService;
-
-    @PostMapping("/index")
-    private Result index() throws Exception{
-
-        List<String[]> idoms = Main.main();
-
-        for (int i=0;i<idoms.size();i++){
-            Idiom1 idiom1 = new Idiom1();
-            char[] chars = idoms.get(i)[0].toCharArray();
-            for (char c:chars) {
-                if(StringUtils.isNotBlank(c+"")){
-                    idiom1.getText().add(c+"");
-                }
-            }
-            idiom1.setLevel(i+1);
-            String[] chars1 = idoms.get(i)[1].split(" ");
-            for (String c:chars1) {
-                if(StringUtils.isNotBlank(c)){
-                    idiom1.getPinYin().add(c);
-                }
-            }
-            new Thread(()->{
-                idiom1Service.save(idiom1);
-            }).start();
-            Thread.sleep(20);
-        }
-
-        return Result.success("aa");
-    }
 
     @PostMapping("/game")
     @JsonView(BaseEntity.ViewView.class)

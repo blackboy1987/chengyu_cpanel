@@ -13,4 +13,4 @@ spring:
         hbm2ddl:
           auto: update
         dialect: org.hibernate.dialect.MySQL5Dialect
-    show-sql: false
+    show-sql: true
