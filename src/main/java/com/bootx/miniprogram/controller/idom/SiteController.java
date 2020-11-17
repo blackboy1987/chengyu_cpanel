@@ -50,6 +50,9 @@ public class SiteController {
         extras.put("firstLoginRewardMoney",1);
         extras.put("firstLoginRewardPoint",1000);
         extras.put("shareRewardPoint",500);
+        extras.put("deductionMoney",0.01);
+        // 0 扣积分。1：扣现金
+        extras.put("deductionType",0);
         siteInfo.setExtras(extras);
         siteInfoService.update(siteInfo);
         return Result.success("");
