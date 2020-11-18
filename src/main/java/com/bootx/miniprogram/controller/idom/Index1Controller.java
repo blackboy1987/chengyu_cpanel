@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @RestController("miniprogramIdiomIndex1Controller")
@@ -136,5 +137,49 @@ public class Index1Controller {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         Member member = memberService.findByUserTokenAndApp(userToken,app);
         return Result.success(memberService.getData(member));
+    }
+
+    /**
+     * 开启红包
+     * @param appCode
+     * @param appSecret
+     * @param userToken
+     * @param level
+     * @param level1
+     * @param parentId
+     * @param redEnvelopeType 红包类型
+     *                        0：离线红包
+     *                        1：过关红包
+     *                        2：翻倍红包
+     *                        4：签到红包
+     *                        5：新人红包
+     * @return
+     */
+    @PostMapping("/redpackage")
+    @JsonView(BaseEntity.ViewView.class)
+    public Result redpackage (String appCode, String appSecret, String userToken,Integer redEnvelopeType) {
+        if(redEnvelopeType==null){
+            return Result.error("红包参数错误");
+        }
+        Map<String,Object> map = new HashMap<>();
+
+        App app = appService.findByCodeAndSecret(appCode,appSecret);
+        SiteInfo siteInfo = app.getSiteInfo();
+        Member member = memberService.findByUserTokenAndApp(userToken,app);
+        BigDecimal money = getMoney(redEnvelopeType);
+        // 写入红包记录
+        memberService.addBalance(member,money, MemberDepositLog.Type.reward,RedEnvelope.getRedEnvelope(redEnvelopeType).getMemo());
+        map.put("money",setScale(money));
+        map.put("userInfo",memberService.getData(member));
+        return Result.success(map);
+    }
+
+    private BigDecimal getMoney(Integer redEnvelopeType) {
+        return new BigDecimal(2);
+
+    }
+
+    private BigDecimal setScale(BigDecimal amount) {
+        return amount.setScale(2, RoundingMode.CEILING);
     }
 }
