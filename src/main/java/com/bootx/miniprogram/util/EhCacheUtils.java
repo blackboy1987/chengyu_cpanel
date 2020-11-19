@@ -47,7 +47,6 @@ public class EhCacheUtils {
             result.put("videoFrontAdId",siteInfo.getVideoFrontAdId());
             result.put("gridAdId",siteInfo.getGridAdId());
             result.put("nativeAdId",siteInfo.getNativeAdId());
-            result.put("isOpen",siteInfo.getIsOpen());
             siteInfoCache.put(new Element("siteInfo_"+siteInfo.getId(),result));
         }
     }

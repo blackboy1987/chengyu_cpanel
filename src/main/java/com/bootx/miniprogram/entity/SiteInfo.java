@@ -238,6 +238,8 @@ public class SiteInfo extends BaseEntity<Long> {
 
     /**
      * deductionPoint:每次点击扣除积分数
+     * deductionMoney:每次点击扣除钱包
+     * deductionType：0：扣除积分。1：扣除钱包
      * browseVideoRewardPoint:看视频奖励积分数
      * shareRewardPoint:分享奖励积分数
      * everyLevelReward:连续通过多少关有奖励

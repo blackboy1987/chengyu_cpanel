@@ -58,11 +58,13 @@ public class SiteController {
         Map<String,Object> extras = new HashMap<>();
         extras.put("deductionPoint",50);
         extras.put("browseVideoRewardPoint",1000);
-        extras.put("everyLevelReward",5);
-        extras.put("everyLevelRewardMoney",3);
+        extras.put("everyLevelReward",1);
+        extras.put("everyLevelRewardMoney",0.2);
         extras.put("firstLoginRewardMoney",1);
         extras.put("firstLoginRewardPoint",1000);
-        siteInfo.setExtras(extras);
+        extras.put("deductionMoney",0.1);
+        extras.put("shareRewardPoint",500);
+        extras.put("deductionType",0);
 
         siteInfoService.update(siteInfo);
         return Result.success("");
