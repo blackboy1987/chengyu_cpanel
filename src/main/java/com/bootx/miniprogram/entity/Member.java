@@ -2,6 +2,7 @@ package com.bootx.miniprogram.entity;
 
 import com.bootx.common.BaseAttributeConverter;
 import com.bootx.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.binarywang.java.emoji.EmojiConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +32,7 @@ public class Member extends BaseEntity<Long> {
     @JoinColumn(nullable = false)
     private MemberRank memberRank;
 
+    @JsonView({ListView.class})
     private String nickName;
 
     private String sessionKey;
@@ -39,23 +41,30 @@ public class Member extends BaseEntity<Long> {
 
     private String unionid;
 
+    @JsonView({ListView.class})
     private Integer gender;
 
+    @JsonView({ListView.class})
     private String city;
 
+    @JsonView({ListView.class})
     private String province;
 
+    @JsonView({ListView.class})
     private String country;
 
+    @JsonView({ListView.class})
     private String avatarUrl;
 
     private String wechat;
 
     private String name;
 
+    @JsonView({ListView.class})
     private String mobile;
 
     @Column(nullable = false, precision = 27, scale = 12)
+    @JsonView({ListView.class})
     private BigDecimal money;
 
     @NotNull
@@ -65,6 +74,7 @@ public class Member extends BaseEntity<Long> {
     @NotNull
     @Min(0)
     @Column(nullable = false)
+    @JsonView({ListView.class})
     private Integer level;
 
     @NotNull
@@ -83,6 +93,7 @@ public class Member extends BaseEntity<Long> {
     private Integer jobIndex;
 
     @Column(nullable = false)
+    @JsonView({ListView.class})
     private Long point;
 
     @Column(updatable = false)
@@ -126,14 +137,14 @@ public class Member extends BaseEntity<Long> {
 
     public String getNickName() {
         if(StringUtils.isNotBlank(nickName)){
-            nickName = emojiConverter.toAlias(nickName);
+            nickName = emojiConverter.toUnicode(nickName);
         }
         return nickName;
     }
 
     public void setNickName(String nickName) {
         if(StringUtils.isNotBlank(nickName)){
-            nickName = emojiConverter.toUnicode(nickName);
+            nickName = emojiConverter.toHtml(nickName);
         }
         this.nickName = nickName;
     }

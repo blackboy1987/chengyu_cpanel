@@ -357,4 +357,10 @@ public final class WebUtils {
 		return result;
 	}
 
+	public static void main(String[] args) throws IOException {
+		List<NameValuePair> nameValuePairs = new ArrayList<>();
+		nameValuePairs.add(new BasicNameValuePair("Query", "天"));
+		String result = EntityUtils.toString(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+		System.out.println(result);
+	}
 }
