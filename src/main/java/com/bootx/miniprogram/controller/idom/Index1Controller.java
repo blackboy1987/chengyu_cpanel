@@ -155,9 +155,9 @@ public class Index1Controller {
      *                        5：新人红包
      * @return
      */
-    @PostMapping("/redpackage")
+    @PostMapping("/openRedEnvelope")
     @JsonView(BaseEntity.ViewView.class)
-    public Result redpackage (String appCode, String appSecret, String userToken,Integer redEnvelopeType) {
+    public Result openRedEnvelope (String appCode, String appSecret, String userToken,Integer redEnvelopeType) {
         if(redEnvelopeType==null){
             return Result.error("红包参数错误");
         }
@@ -166,7 +166,7 @@ public class Index1Controller {
         App app = appService.findByCodeAndSecret(appCode,appSecret);
         SiteInfo siteInfo = app.getSiteInfo();
         Member member = memberService.findByUserTokenAndApp(userToken,app);
-        BigDecimal money = getMoney(redEnvelopeType);
+        BigDecimal money = getMoney(RedEnvelope.getRedEnvelope(redEnvelopeType));
         // 写入红包记录
         memberService.addBalance(member,money, MemberDepositLog.Type.reward,RedEnvelope.getRedEnvelope(redEnvelopeType).getMemo());
         map.put("money",setScale(money));
@@ -174,7 +174,7 @@ public class Index1Controller {
         return Result.success(map);
     }
 
-    private BigDecimal getMoney(Integer redEnvelopeType) {
+    private BigDecimal getMoney(RedEnvelope redEnvelope) {
         return new BigDecimal(2);
 
     }
